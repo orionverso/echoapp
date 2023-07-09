@@ -1,7 +1,7 @@
 package main
 
 import (
-	"castor/construct/pattern/function"
+	"castor/construct/pattern/lambdarestapi"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 
@@ -21,10 +21,7 @@ func NewCastorStack(scope constructs.Construct, id string, props *CastorStackPro
 	}
 	stack := awscdk.NewStack(scope, &id, &sprops)
 
-	// The code that defines your stack goes here
-
-	// example resource
-	function.NewDoAction(stack, &function.WriteEchoIds_DEV, &function.WriteEchoProps_PROD)
+	lambdarestapi.NewReceiveRequest(stack, nil, nil)
 
 	return stack
 }

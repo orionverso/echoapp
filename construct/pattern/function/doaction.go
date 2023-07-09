@@ -28,7 +28,6 @@ type DoActionProps interface {
 }
 
 type DoAction interface {
-	constructs.Construct
 	Function() awslambda.Function
 }
 
