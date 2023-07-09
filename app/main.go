@@ -1,8 +1,9 @@
 package main
 
 import (
+	"castor/construct/pattern/function"
+
 	"github.com/aws/aws-cdk-go/awscdk/v2"
-	"github.com/aws/aws-cdk-go/awscdk/v2/awssqs"
 
 	// "github.com/aws/aws-cdk-go/awscdk/v2/awssqs"
 	"github.com/aws/constructs-go/constructs/v10"
@@ -23,9 +24,7 @@ func NewCastorStack(scope constructs.Construct, id string, props *CastorStackPro
 	// The code that defines your stack goes here
 
 	// example resource
-	awssqs.NewQueue(stack, jsii.String("CastorQueue"), &awssqs.QueueProps{
-		VisibilityTimeout: awscdk.Duration_Seconds(jsii.Number(300)),
-	})
+	function.NewDoAction(stack, &function.WriteEchoIds_DEV, &function.WriteEchoProps_PROD)
 
 	return stack
 }
