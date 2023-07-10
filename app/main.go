@@ -1,7 +1,7 @@
 package main
 
 import (
-	"castor/construct/pattern/lambdarestapi"
+	fargate "castor/construct/pattern/applicationloadbalancedfargateservice"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 
@@ -21,7 +21,8 @@ func NewCastorStack(scope constructs.Construct, id string, props *CastorStackPro
 	}
 	stack := awscdk.NewStack(scope, &id, &sprops)
 
-	lambdarestapi.NewReceiveRequest(stack, nil, nil)
+	// repository.NewDistributeImage(stack, nil, nil)
+	fargate.NewReceiveRequestDoAction(stack, nil, nil)
 
 	return stack
 }
