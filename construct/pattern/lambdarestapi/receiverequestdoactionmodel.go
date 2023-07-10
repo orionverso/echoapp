@@ -5,80 +5,86 @@ import (
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsapigateway"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awsiam"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslogs"
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
 )
 
-type ReceiveModelIds struct {
+type ReceiveRequestDoActionModelIds struct {
 	ConstructId     *string
 	LambdaRestApiId *string
 	LogGroupId      *string
 	function.DoActionIds
 }
 
-func (id *ReceiveModelIds) Construct() *string {
+func (id *ReceiveRequestDoActionModelIds) Construct() *string {
 	return id.ConstructId
 }
 
-func (id *ReceiveModelIds) LambdaRestApi() *string {
+func (id *ReceiveRequestDoActionModelIds) LambdaRestApi() *string {
 	return id.LambdaRestApiId
 }
 
-func (id *ReceiveModelIds) DoAction() function.DoActionIds {
+func (id *ReceiveRequestDoActionModelIds) DoAction() function.DoActionIds {
 	return id.DoActionIds
 }
 
-func (id *ReceiveModelIds) LogGroup() *string {
+func (id *ReceiveRequestDoActionModelIds) LogGroup() *string {
 	return id.LogGroupId
 }
 
-type ReceiveModelProps struct {
+type ReceiveRequestDoActionModelProps struct {
 	*awsapigateway.LambdaRestApiProps
 	*awslogs.LogGroupProps
 	function.DoActionProps
 }
 
-func (props *ReceiveModelProps) LambdaRestApi() *awsapigateway.LambdaRestApiProps {
+func (props *ReceiveRequestDoActionModelProps) LambdaRestApi() *awsapigateway.LambdaRestApiProps {
 	return props.LambdaRestApiProps
 }
 
-func (props *ReceiveModelProps) DoAction() function.DoActionProps {
+func (props *ReceiveRequestDoActionModelProps) DoAction() function.DoActionProps {
 	return props.DoActionProps
 }
 
-func (props *ReceiveModelProps) LogGroup() *awslogs.LogGroupProps {
+func (props *ReceiveRequestDoActionModelProps) LogGroup() *awslogs.LogGroupProps {
 	return props.LogGroupProps
 }
 
 // connections
-func (props *ReceiveModelProps) AddHandlerToLambdaRestApi(fn awslambda.Function, api *awsapigateway.LambdaRestApiProps) {
+func (props *ReceiveRequestDoActionModelProps) AddHandlerToLambdaRestApi(fn awslambda.Function, api *awsapigateway.LambdaRestApiProps) {
 	api.Handler = fn
 }
 
-func (props *ReceiveModelProps) AddAccessLogDestinationToLambdaRestApi(log awsapigateway.LogGroupLogDestination, api *awsapigateway.LambdaRestApiProps) {
+func (props *ReceiveRequestDoActionModelProps) AddAccessLogDestinationToLambdaRestApi(log awsapigateway.LogGroupLogDestination, api *awsapigateway.LambdaRestApiProps) {
 	api.DeployOptions.AccessLogDestination = log
 }
 
-type ReceiveModel struct {
+type ReceiveRequestDoActionModel struct {
 	constructs.Construct
 	lambdarestapi awsapigateway.LambdaRestApi
+	doaction      awsiam.IRole
 }
 
-func (mo *ReceiveModel) LambdaRestApi() awsapigateway.LambdaRestApi {
+func (mo *ReceiveRequestDoActionModel) LambdaRestApi() awsapigateway.LambdaRestApi {
 	return mo.lambdarestapi
 }
 
+func (mo *ReceiveRequestDoActionModel) DoActionRole() awsiam.IRole {
+	return mo.doaction
+}
+
 // SETTINGS
-var ReceiveModelIds_DEFAULT ReceiveModelIds = ReceiveModelIds{
+var ReceiveRequestDoActionModelIds_DEFAULT ReceiveRequestDoActionModelIds = ReceiveRequestDoActionModelIds{
 	ConstructId:     jsii.String("MODEL-resource-receivemodel-default"),
 	LambdaRestApiId: jsii.String("MODEL-resource-lambdarestapi-default"),
 	DoActionIds:     &function.DoModelIds_DEFAULT,
 	LogGroupId:      jsii.String("MODEL-resource-loggroup-default"),
 }
 
-var ReceiveModelProps_DEFAULT ReceiveModelProps = ReceiveModelProps{
+var ReceiveRequestDoActionModelProps_DEFAULT ReceiveRequestDoActionModelProps = ReceiveRequestDoActionModelProps{
 	LambdaRestApiProps: &awsapigateway.LambdaRestApiProps{
 		CloudWatchRole: jsii.Bool(true),
 		Description:    jsii.String("This is a apigateway with lambda proxy. The api will receive the body request and offer to proxy"),

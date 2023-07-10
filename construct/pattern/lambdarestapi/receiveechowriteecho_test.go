@@ -11,7 +11,7 @@ import (
 )
 
 // DEVELOPMENT
-func TestSynthReceiveEcho_DEV(t *testing.T) {
+func TestSynthReceiveEchoWriteEcho_DEV(t *testing.T) {
 	defer func() {
 		if err := recover(); err != nil {
 			t.Fail()
@@ -30,7 +30,7 @@ func TestSynthReceiveEcho_DEV(t *testing.T) {
 
 	stack := awscdk.NewStack(nil, nil, nil)
 
-	NewReceiveRequest(stack, &ReceiveEchoIds_DEV, &ReceiveEchoProps_DEV)
+	NewReceiveRequestDoAction(stack, &ReceiveEchoWriteEchoIds_DEV, &ReceiveEchoWriteEchoProps_DEV)
 
 	assertions.Template_FromStack(stack, &TemplateParsingOption_DEV)
 }
@@ -40,7 +40,7 @@ var TemplateParsingOption_DEV assertions.TemplateParsingOptions = assertions.Tem
 }
 
 // PRODUCTION
-func TestSynthReceiveEcho_PROD(t *testing.T) {
+func TestSynthReceiveEchoWriteEcho_PROD(t *testing.T) {
 	defer func() {
 		if err := recover(); err != nil {
 			t.Fail()
@@ -59,7 +59,7 @@ func TestSynthReceiveEcho_PROD(t *testing.T) {
 
 	stack := awscdk.NewStack(nil, nil, nil)
 
-	NewReceiveRequest(stack, &ReceiveEchoIds_PROD, &ReceiveEchoProps_PROD)
+	NewReceiveRequestDoAction(stack, &ReceiveEchoWriteEchoIds_PROD, &ReceiveEchoWriteEchoProps_PROD)
 
 	assertions.Template_FromStack(stack, &TemplateParsingOption_PROD)
 }

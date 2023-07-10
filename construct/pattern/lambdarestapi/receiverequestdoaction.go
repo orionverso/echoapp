@@ -4,19 +4,20 @@ import (
 	"castor/construct/pattern/function"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsapigateway"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awsiam"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslogs"
 	"github.com/aws/constructs-go/constructs/v10"
 )
 
-type ReceiveRequestIds interface {
+type ReceiveRequestDoActionIds interface {
 	Construct() *string
 	LambdaRestApi() *string
 	DoAction() function.DoActionIds
 	LogGroup() *string
 }
 
-type ReceiveRequestProps interface {
+type ReceiveRequestDoActionProps interface {
 	LambdaRestApi() *awsapigateway.LambdaRestApiProps
 	DoAction() function.DoActionProps
 	LogGroup() *awslogs.LogGroupProps
@@ -25,13 +26,14 @@ type ReceiveRequestProps interface {
 	AddAccessLogDestinationToLambdaRestApi(awsapigateway.LogGroupLogDestination, *awsapigateway.LambdaRestApiProps)
 }
 
-type ReceiveRequest interface {
+type ReceiveRequestDoAction interface {
 	LambdaRestApi() awsapigateway.LambdaRestApi
+	WriterRole() awsiam.IRole
 }
 
-func NewReceiveRequest(scope constructs.Construct, id ReceiveRequestIds, props ReceiveRequestProps) ReceiveRequest {
-	var sprops ReceiveRequestProps = &ReceiveModelProps_DEFAULT
-	var sid ReceiveRequestIds = &ReceiveModelIds_DEFAULT
+func NewReceiveRequestDoAction(scope constructs.Construct, id ReceiveRequestDoActionIds, props ReceiveRequestDoActionProps) ReceiveRequestDoAction {
+	var sprops ReceiveRequestDoActionProps = &ReceiveRequestDoActionModelProps_DEFAULT
+	var sid ReceiveRequestDoActionIds = &ReceiveRequestDoActionModelIds_DEFAULT
 
 	if props != nil {
 		sprops = props
@@ -53,9 +55,10 @@ func NewReceiveRequest(scope constructs.Construct, id ReceiveRequestIds, props R
 
 	resource := awsapigateway.NewLambdaRestApi(this, sid.LambdaRestApi(), sprops.LambdaRestApi())
 
-	var component ReceiveRequest = &ReceiveModel{
+	var component ReceiveRequestDoAction = &ReceiveRequestDoActionModel{
 		Construct:     this,
 		lambdarestapi: resource,
+		writerrole:    fn.Function().Role(),
 	}
 
 	return component

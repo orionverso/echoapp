@@ -1,4 +1,4 @@
-package lambdarestapi
+package bucket
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 )
 
 // MODEL
-func TestSynthReceiveModel_DEFAULT(t *testing.T) {
+func TestSynthSaveModel_DEFAULT(t *testing.T) {
 	defer func() {
 		if err := recover(); err != nil {
 			t.Fail()
@@ -30,7 +30,7 @@ func TestSynthReceiveModel_DEFAULT(t *testing.T) {
 
 	stack := awscdk.NewStack(nil, nil, nil)
 
-	NewReceiveRequest(stack, &ReceiveModelIds_DEFAULT, &ReceiveModelProps_DEFAULT)
+	NewSaveFile(stack, &SaveModelIds_DEFAULT, &SaveModelProps_DEFAULT)
 
 	assertions.Template_FromStack(stack, &TemplateParsingOption_DEFAULT)
 }

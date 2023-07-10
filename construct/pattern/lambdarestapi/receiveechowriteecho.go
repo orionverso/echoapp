@@ -9,27 +9,27 @@ import (
 	"github.com/aws/jsii-runtime-go"
 )
 
-type ReceiveEchoIds struct {
-	ReceiveModelIds
+type ReceiveEchoWriteEchoIds struct {
+	ReceiveRequestDoActionModelIds
 }
 
-type ReceiveEchoProps struct {
-	ReceiveModelProps
+type ReceiveEchoWriteEchoProps struct {
+	ReceiveRequestDoActionModelProps
 }
 
 // SETTINGS
 // DEVELOPMENT
-var ReceiveEchoIds_DEV ReceiveEchoIds = ReceiveEchoIds{
-	ReceiveModelIds: ReceiveModelIds{
-		ConstructId:     jsii.String("ReceiveEcho-resource-receivemodel-default"),
-		LambdaRestApiId: jsii.String("ReceiveEcho-resource-lambdarestapi-default"),
+var ReceiveEchoWriteEchoIds_DEV ReceiveEchoWriteEchoIds = ReceiveEchoWriteEchoIds{
+	ReceiveRequestDoActionModelIds: ReceiveRequestDoActionModelIds{
+		ConstructId:     jsii.String("ReceiveEchoWriteEcho-resource-receivemodel-default"),
+		LambdaRestApiId: jsii.String("ReceiveEchoWriteEcho-resource-lambdarestapi-default"),
 		DoActionIds:     &function.WriteEchoIds_DEV,
-		LogGroupId:      jsii.String("ReceiveEcho-resource-loggroup-default"),
+		LogGroupId:      jsii.String("ReceiveEchoWriteEcho-resource-loggroup-default"),
 	},
 }
 
-var ReceiveEchoProps_DEV ReceiveEchoProps = ReceiveEchoProps{
-	ReceiveModelProps: ReceiveModelProps{
+var ReceiveEchoWriteEchoProps_DEV ReceiveEchoWriteEchoProps = ReceiveEchoWriteEchoProps{
+	ReceiveRequestDoActionModelProps: ReceiveRequestDoActionModelProps{
 		LambdaRestApiProps: &awsapigateway.LambdaRestApiProps{
 			CloudWatchRole: jsii.Bool(true),
 			Description:    jsii.String("This is a apigateway with lambda proxy. The api will receive the body request and offer to proxy"),
@@ -52,17 +52,17 @@ var ReceiveEchoProps_DEV ReceiveEchoProps = ReceiveEchoProps{
 }
 
 // PRODUCTION
-var ReceiveEchoIds_PROD ReceiveEchoIds = ReceiveEchoIds{
-	ReceiveModelIds: ReceiveModelIds{
-		ConstructId:     jsii.String("ReceiveEcho-resource-receivemodel-default"),
-		LambdaRestApiId: jsii.String("ReceiveEcho-resource-lambdarestapi-default"),
+var ReceiveEchoWriteEchoIds_PROD ReceiveEchoWriteEchoIds = ReceiveEchoWriteEchoIds{
+	ReceiveRequestDoActionModelIds: ReceiveRequestDoActionModelIds{
+		ConstructId:     jsii.String("ReceiveEchoWriteEcho-resource-receivemodel-default"),
+		LambdaRestApiId: jsii.String("ReceiveEchoWriteEcho-resource-lambdarestapi-default"),
 		DoActionIds:     &function.WriteEchoIds_PROD,
-		LogGroupId:      jsii.String("ReceiveEcho-resource-loggroup-default"),
+		LogGroupId:      jsii.String("ReceiveEchoWriteEcho-resource-loggroup-default"),
 	},
 }
 
-var ReceiveEchoProps_PROD ReceiveEchoProps = ReceiveEchoProps{
-	ReceiveModelProps: ReceiveModelProps{
+var ReceiveEchoWriteEchoProps_PROD ReceiveEchoWriteEchoProps = ReceiveEchoWriteEchoProps{
+	ReceiveRequestDoActionModelProps: ReceiveRequestDoActionModelProps{
 		LambdaRestApiProps: &awsapigateway.LambdaRestApiProps{
 			CloudWatchRole: jsii.Bool(true),
 			Description:    jsii.String("This is a apigateway with lambda proxy. The api will receive the body request and offer to proxy"),
