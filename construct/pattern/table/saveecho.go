@@ -1,6 +1,8 @@
 package table
 
 import (
+	"castor/construct/pattern/choice"
+
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsdynamodb"
 	"github.com/aws/jsii-runtime-go"
@@ -18,8 +20,9 @@ type SaveEchoProps struct {
 // DEVELOPMENT
 var SaveEchoIds_DEV SaveEchoIds = SaveEchoIds{
 	SaveBlockModelIds: SaveBlockModelIds{
-		TableId:     jsii.String("SaveEcho-table-resource-dev"),
-		ConstructId: jsii.String("SaveEcho-construct-dev"),
+		TableId:            jsii.String("SaveEcho-table-resource-dev"),
+		ConstructId:        jsii.String("SaveEcho-construct-dev"),
+		DiscoverStorageIds: &choice.DiscoverDynamoDbIds_DEV,
 	},
 }
 
@@ -32,14 +35,16 @@ var SaveEchoProps_DEV SaveEchoProps = SaveEchoProps{
 			},
 			RemovalPolicy: awscdk.RemovalPolicy_DESTROY,
 		},
+		DiscoverStorageProps: &choice.DiscoverDynamoDbProps_DEV,
 	},
 }
 
 // PRODUCTION
 var SaveEchoIds_PROD SaveEchoIds = SaveEchoIds{
 	SaveBlockModelIds: SaveBlockModelIds{
-		TableId:     jsii.String("SaveEcho-table-resource-prod"),
-		ConstructId: jsii.String("SaveEcho-construct-prod"),
+		TableId:            jsii.String("SaveEcho-table-resource-prod"),
+		ConstructId:        jsii.String("SaveEcho-construct-prod"),
+		DiscoverStorageIds: &choice.DiscoverDynamoDbIds_PROD,
 	},
 }
 
@@ -52,5 +57,6 @@ var SaveEchoProps_PROD SaveEchoProps = SaveEchoProps{
 			},
 			RemovalPolicy: awscdk.RemovalPolicy_DESTROY,
 		},
+		DiscoverStorageProps: &choice.DiscoverDynamoDbProps_PROD,
 	},
 }

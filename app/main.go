@@ -1,7 +1,7 @@
 package main
 
 import (
-	"castor/construct/pattern/bucket"
+	"castor/construct/pattern/table"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 
@@ -23,7 +23,7 @@ func NewCastorStack(scope constructs.Construct, id string, props *CastorStackPro
 
 	// repository.NewDistributeImage(stack, nil, nil)
 
-	bucket.NewSaveFile(stack, &bucket.SaveEchoIds_DEV, &bucket.SaveEchoProps_DEV)
+	table.NewSaveBlockData(stack, &table.SaveEchoIds_DEV, &table.SaveEchoProps_DEV)
 
 	return stack
 }

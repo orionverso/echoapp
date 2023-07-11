@@ -1,24 +1,28 @@
 package table
 
 import (
+	"castor/construct/pattern/choice"
+
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsdynamodb"
-	"github.com/aws/aws-cdk-go/awscdk/v2/awsiam"
 	"github.com/aws/constructs-go/constructs/v10"
 )
 
 type SaveBlockDataIds interface {
 	Construct() *string
 	Table() *string
+	Choice() choice.DiscoverStorageIds
 }
 
 type SaveBlockDataProps interface {
 	Table() *awsdynamodb.TableProps
-	HasWriterRole() bool
-	WriterRole() awsiam.IRole
+	Choice() choice.DiscoverStorageProps
+	// connections
+	AddDestinationToChoice(*string)
 }
 
 type SaveBlockData interface {
 	Table() awsdynamodb.Table
+	Choice() choice.DiscoverStorage
 }
 
 func NewSaveBlockData(scope constructs.Construct, id SaveBlockDataIds, props SaveBlockDataProps) SaveBlockData {
@@ -37,12 +41,13 @@ func NewSaveBlockData(scope constructs.Construct, id SaveBlockDataIds, props Sav
 
 	table := awsdynamodb.NewTable(this, sid.Table(), sprops.Table())
 
-	if sprops.HasWriterRole() {
-		table.GrantWriteData(sprops.WriterRole())
-	}
+	sprops.AddDestinationToChoice(table.TableArn())
+
+	choice := choice.NewDiscoverStorage(this, sid.Choice(), sprops.Choice())
 
 	var component SaveBlockData = &SaveBlockModel{
-		table: table,
+		table:  table,
+		choice: choice,
 	}
 
 	return component

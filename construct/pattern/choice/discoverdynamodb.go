@@ -17,8 +17,8 @@ type DiscoverDynamoDbProps struct {
 // DEVELOPMENT
 var DiscoverDynamoDbIds_DEV DiscoverDynamoDbIds = DiscoverDynamoDbIds{
 	DiscoverModelIds: DiscoverModelIds{
-		ServiceId:     jsii.String("DiscoverDynamoDb-serviceparameter-dev"),
-		DestinationId: jsii.String("DiscoverDynamoDb-destinationparameter-dev"),
+		ServiceId:     jsii.String("Discover-serviceparameter-dev"),
+		DestinationId: jsii.String("Discover-destinationparameter-dev"),
 	},
 }
 
@@ -37,8 +37,8 @@ var DiscoverDynamoDbProps_DEV DiscoverDynamoDbProps = DiscoverDynamoDbProps{
 // PRODUCTION
 var DiscoverDynamoDbIds_PROD DiscoverDynamoDbIds = DiscoverDynamoDbIds{
 	DiscoverModelIds: DiscoverModelIds{
-		ServiceId:     jsii.String("DiscoverDynamoDb-serviceparameter-prod"),
-		DestinationId: jsii.String("DiscoverDynamoDb-destinationparameter-prod"),
+		ServiceId:     jsii.String("Discover-serviceparameter-prod"),
+		DestinationId: jsii.String("Discover-destinationparameter-prod"),
 	},
 }
 

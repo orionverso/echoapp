@@ -17,8 +17,8 @@ type DiscoverS3Props struct {
 // DEVELOPMENT
 var DiscoverS3Ids_DEV DiscoverS3Ids = DiscoverS3Ids{
 	DiscoverModelIds: DiscoverModelIds{
-		ServiceId:     jsii.String("DiscoverS3-serviceparameter-dev"),
-		DestinationId: jsii.String("DiscoverS3-destinationparameter-dev"),
+		ServiceId:     jsii.String("Discover-serviceparameter-dev"),
+		DestinationId: jsii.String("Discover-destinationparameter-dev"),
 	},
 }
 
@@ -38,8 +38,8 @@ var DiscoverS3Props_DEV DiscoverS3Props = DiscoverS3Props{
 // PRODUCTION
 var DiscoverS3Ids_PROD DiscoverS3Ids = DiscoverS3Ids{
 	DiscoverModelIds: DiscoverModelIds{
-		ServiceId:     jsii.String("DiscoverS3-serviceparameter-prod"),
-		DestinationId: jsii.String("DiscoverS3-destinationparameter-prod"),
+		ServiceId:     jsii.String("Discover-serviceparameter-prod"),
+		DestinationId: jsii.String("Discover-destinationparameter-prod"),
 	},
 }
 
