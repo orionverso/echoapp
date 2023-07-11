@@ -40,9 +40,9 @@ func NewReceiveRequestDoAction(scope constructs.Construct, id ReceiveRequestDoAc
 		sid = id
 	}
 
-	repo := repository.NewDistributeImage(scope, sid.DistributeImage(), sprops.DistributeImage())
-
 	this := constructs.NewConstruct(scope, sid.Construct())
+
+	repo := repository.NewDistributeImage(this, sid.DistributeImage(), sprops.DistributeImage())
 
 	image := awsecs.AssetImage_FromEcrRepository(repo.Repository(), sprops.Tag())
 

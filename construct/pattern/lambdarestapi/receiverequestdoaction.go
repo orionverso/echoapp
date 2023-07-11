@@ -44,9 +44,9 @@ func NewReceiveRequestDoAction(scope constructs.Construct, id ReceiveRequestDoAc
 		sid = id
 	}
 
-	doaction := function.NewDoAction(scope, sid.DoAction(), sprops.DoAction())
-
 	this := constructs.NewConstruct(scope, sid.Construct())
+
+	doaction := function.NewDoAction(this, sid.DoAction(), sprops.DoAction())
 
 	loggroup := awslogs.NewLogGroup(this, sid.LogGroup(), sprops.LogGroup())
 	loggrouplogdestination := awsapigateway.NewLogGroupLogDestination(loggroup)
