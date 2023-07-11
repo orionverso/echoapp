@@ -78,11 +78,31 @@ func (props *DoModelProps) AddResourceToPolicy(resource *string, policy *awsiam.
 
 type DoModel struct {
 	constructs.Construct
-	function awslambda.Function
+	function           awslambda.Function
+	successqueue       awssqs.Queue
+	failurequeue       awssqs.Queue
+	successqueuepolicy awsiam.PolicyStatement
+	failurequeuepolicy awsiam.PolicyStatement
 }
 
 func (mo *DoModel) Function() awslambda.Function {
 	return mo.function
+}
+
+func (mo *DoModel) SuccessQueue() awssqs.Queue {
+	return mo.successqueue
+}
+
+func (mo *DoModel) FailureQueue() awssqs.Queue {
+	return mo.failurequeue
+}
+
+func (mo *DoModel) SuccessQueuePolicy() awsiam.PolicyStatement {
+	return mo.successqueuepolicy
+}
+
+func (mo *DoModel) FailureQueuePolicy() awsiam.PolicyStatement {
+	return mo.failurequeuepolicy
 }
 
 // SETTINGS

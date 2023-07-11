@@ -5,7 +5,6 @@ import (
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsapigateway"
-	"github.com/aws/aws-cdk-go/awscdk/v2/awsiam"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslogs"
 	"github.com/aws/constructs-go/constructs/v10"
@@ -64,16 +63,26 @@ func (props *ReceiveRequestDoActionModelProps) AddAccessLogDestinationToLambdaRe
 
 type ReceiveRequestDoActionModel struct {
 	constructs.Construct
-	lambdarestapi awsapigateway.LambdaRestApi
-	doaction      awsiam.IRole
+	lambdarestapi          awsapigateway.LambdaRestApi
+	doaction               function.DoAction
+	loggroup               awslogs.LogGroup
+	loggrouplogdestination awsapigateway.LogGroupLogDestination
 }
 
 func (mo *ReceiveRequestDoActionModel) LambdaRestApi() awsapigateway.LambdaRestApi {
 	return mo.lambdarestapi
 }
 
-func (mo *ReceiveRequestDoActionModel) DoActionRole() awsiam.IRole {
+func (mo *ReceiveRequestDoActionModel) DoAction() function.DoAction {
 	return mo.doaction
+}
+
+func (mo *ReceiveRequestDoActionModel) LogGroup() awslogs.LogGroup {
+	return mo.loggroup
+}
+
+func (mo *ReceiveRequestDoActionModel) LogGroupLogDestination() awsapigateway.LogGroupLogDestination {
+	return mo.loggrouplogdestination
 }
 
 // SETTINGS

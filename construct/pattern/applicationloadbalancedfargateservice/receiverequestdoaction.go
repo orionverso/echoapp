@@ -23,7 +23,9 @@ type ReceiveRequestDoActionProps interface {
 }
 
 type ReceiveRequestDoAction interface {
+	constructs.Construct
 	ApplicationLoadBalancedFargateService() awsecspatterns.ApplicationLoadBalancedFargateService
+	DistributeImage() repository.DistributeImage
 }
 
 func NewReceiveRequestDoAction(scope constructs.Construct, id ReceiveRequestDoActionIds, props ReceiveRequestDoActionProps) ReceiveRequestDoAction {
@@ -51,6 +53,7 @@ func NewReceiveRequestDoAction(scope constructs.Construct, id ReceiveRequestDoAc
 	var component ReceiveRequestDoAction = &ReceiveRequestDoActionModel{
 		Construct:                             this,
 		applicationloadbalancedfargateservice: resource,
+		distributeimage:                       repo,
 	}
 
 	return component

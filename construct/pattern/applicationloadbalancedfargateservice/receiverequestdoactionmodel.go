@@ -54,10 +54,15 @@ func (props *ReceiveRequestDoActionModelProps) AddContainerImageToApplicationLoa
 type ReceiveRequestDoActionModel struct {
 	constructs.Construct
 	applicationloadbalancedfargateservice awsecspatterns.ApplicationLoadBalancedFargateService
+	distributeimage                       repository.DistributeImage
 }
 
 func (mo *ReceiveRequestDoActionModel) ApplicationLoadBalancedFargateService() awsecspatterns.ApplicationLoadBalancedFargateService {
 	return mo.applicationloadbalancedfargateservice
+}
+
+func (mo *ReceiveRequestDoActionModel) DistributeImage() repository.DistributeImage {
+	return mo.distributeimage
 }
 
 // SETTINGS

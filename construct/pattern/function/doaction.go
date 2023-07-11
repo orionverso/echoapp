@@ -29,6 +29,10 @@ type DoActionProps interface {
 
 type DoAction interface {
 	Function() awslambda.Function
+	SuccessQueue() awssqs.Queue
+	FailureQueue() awssqs.Queue
+	SuccessQueuePolicy() awsiam.PolicyStatement
+	FailureQueuePolicy() awsiam.PolicyStatement
 }
 
 func NewDoAction(scope constructs.Construct, id DoActionIds, props DoActionProps) DoAction {
@@ -45,14 +49,14 @@ func NewDoAction(scope constructs.Construct, id DoActionIds, props DoActionProps
 
 	this := constructs.NewConstruct(scope, sid.Construct())
 
-	success := awssqs.NewQueue(this, sid.SuccessQueue(), sprops.SuccessQueue())
-	failure := awssqs.NewQueue(this, sid.FailureQueue(), sprops.FailureQueue())
+	successqueue := awssqs.NewQueue(this, sid.SuccessQueue(), sprops.SuccessQueue())
+	failurequeue := awssqs.NewQueue(this, sid.FailureQueue(), sprops.FailureQueue())
 
-	sprops.AddResourceToPolicy(success.QueueArn(), sprops.AllowReceiveMessageFromFunction())
-	sprops.AddResourceToPolicy(failure.QueueArn(), sprops.AllowReceiveMessageFromFunction())
+	sprops.AddResourceToPolicy(successqueue.QueueArn(), sprops.AllowReceiveMessageFromFunction())
+	sprops.AddResourceToPolicy(failurequeue.QueueArn(), sprops.AllowReceiveMessageFromFunction())
 
-	destinationOnSuccess := awslambdadestinations.NewSqsDestination(success)
-	destinationOnFailure := awslambdadestinations.NewSqsDestination(failure)
+	destinationOnSuccess := awslambdadestinations.NewSqsDestination(successqueue)
+	destinationOnFailure := awslambdadestinations.NewSqsDestination(failurequeue)
 
 	sprops.AddOnSuccessDestination(destinationOnSuccess, sprops.Function())
 	sprops.AddOnFailureDestination(destinationOnFailure, sprops.Function())
@@ -61,18 +65,22 @@ func NewDoAction(scope constructs.Construct, id DoActionIds, props DoActionProps
 
 	sprops.AddPrincipalToPolicy(fn.Role(), sprops.AllowReceiveMessageFromFunction())
 
-	success.GrantSendMessages(fn)
-	failure.GrantSendMessages(fn)
+	successqueue.GrantSendMessages(fn)
+	failurequeue.GrantSendMessages(fn)
 
-	successpolicy := awsiam.NewPolicyStatement(sprops.AllowReceiveMessageFromFunction())
-	failurepolicy := awsiam.NewPolicyStatement(sprops.AllowReceiveMessageFromFunction())
+	successqueuepolicy := awsiam.NewPolicyStatement(sprops.AllowReceiveMessageFromFunction())
+	failurequeuepolicy := awsiam.NewPolicyStatement(sprops.AllowReceiveMessageFromFunction())
 
-	success.AddToResourcePolicy(successpolicy)
-	failure.AddToResourcePolicy(failurepolicy)
+	successqueue.AddToResourcePolicy(successqueuepolicy)
+	failurequeue.AddToResourcePolicy(failurequeuepolicy)
 
 	var component DoAction = &DoModel{
-		Construct: this,
-		function:  fn,
+		Construct:          this,
+		function:           fn,
+		successqueue:       successqueue,
+		failurequeue:       failurequeue,
+		successqueuepolicy: successqueuepolicy,
+		failurequeuepolicy: failurequeuepolicy,
 	}
 
 	return component
