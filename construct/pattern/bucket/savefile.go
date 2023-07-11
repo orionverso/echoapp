@@ -1,25 +1,28 @@
 package bucket
 
 import (
-	"github.com/aws/aws-cdk-go/awscdk/v2/awsiam"
+	"castor/construct/pattern/choice"
+
 	"github.com/aws/aws-cdk-go/awscdk/v2/awss3"
 	"github.com/aws/constructs-go/constructs/v10"
-	"github.com/aws/jsii-runtime-go"
 )
 
 type SaveFileIds interface {
 	Construct() *string
 	Bucket() *string
+	Choice() choice.DiscoverStorageIds
 }
 
 type SaveFileProps interface {
 	Bucket() *awss3.BucketProps
-	WriterRole() awsiam.IRole // At runtime
-	HasWriterRole() bool
+	Choice() choice.DiscoverStorageProps
+	// connections
+	AddDestinationToChoice(*string)
 }
 
 type SaveFile interface {
 	Bucket() awss3.Bucket
+	Choice() choice.DiscoverStorage
 }
 
 func NewSaveFile(scope constructs.Construct, id SaveFileIds, props SaveFileProps) SaveFile {
@@ -38,12 +41,13 @@ func NewSaveFile(scope constructs.Construct, id SaveFileIds, props SaveFileProps
 
 	resource := awss3.NewBucket(this, sid.Bucket(), sprops.Bucket())
 
-	if sprops.HasWriterRole() {
-		resource.GrantWrite(sprops.WriterRole(), jsii.String("*"), jsii.Strings("*"))
-	}
+	sprops.AddDestinationToChoice(resource.BucketArn())
+
+	ch := choice.NewDiscoverStorage(this, sid.Choice(), sprops.Choice())
 
 	var component SaveFile = &SaveModel{
 		bucket: resource,
+		choice: ch,
 	}
 
 	return component

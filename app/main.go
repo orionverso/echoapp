@@ -1,7 +1,7 @@
 package main
 
 import (
-	fargate "castor/construct/pattern/applicationloadbalancedfargateservice"
+	"castor/construct/pattern/bucket"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 
@@ -22,7 +22,8 @@ func NewCastorStack(scope constructs.Construct, id string, props *CastorStackPro
 	stack := awscdk.NewStack(scope, &id, &sprops)
 
 	// repository.NewDistributeImage(stack, nil, nil)
-	fargate.NewReceiveRequestDoAction(stack, nil, nil)
+
+	bucket.NewSaveFile(stack, &bucket.SaveEchoIds_DEV, &bucket.SaveEchoProps_DEV)
 
 	return stack
 }

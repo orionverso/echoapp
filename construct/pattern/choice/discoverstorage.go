@@ -14,7 +14,6 @@ type DiscoverStorageIds interface {
 type DiscoverStorageProps interface {
 	Service() *awsssm.StringParameterProps
 	Destination() *awsssm.StringParameterProps
-	// connections
 }
 
 type DiscoverStorage interface {
