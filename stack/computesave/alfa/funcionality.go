@@ -5,6 +5,7 @@ import (
 	"castor/construct/pattern/lambdarestapi"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
 )
@@ -43,8 +44,16 @@ func NewFuncionality(scope constructs.Construct, id FuncionalityIds, props Funci
 	save := bucket.NewSaveFile(stack, sid.SaveFile(), sprops.SaveFile())
 
 	save.Bucket().GrantWrite(doer.DoAction().Function(), jsii.String("*"), jsii.Strings("*"))
-	save.Choice().Service().GrantRead(doer.DoAction().Function())
-	save.Choice().Destination().GrantRead(doer.DoAction().Function())
+
+	doer.DoAction().Function().AddEnvironment(
+		jsii.String("STORAGE_SERVICE"),
+		jsii.String("S3"),
+		&awslambda.EnvironmentOptions{})
+
+	doer.DoAction().Function().AddEnvironment(
+		jsii.String("DESTINATION"),
+		save.Bucket().BucketName(),
+		&awslambda.EnvironmentOptions{})
 
 	var component Funcionality = &FuncionalityModel{
 		Stack:                  stack,

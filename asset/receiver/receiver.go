@@ -3,65 +3,43 @@ package receiver
 import (
 	"context"
 	"log"
+	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/aws/aws-sdk-go-v2/service/ssm"
 )
-
-type getReceiverProps struct {
-	stgGetParameterInput ssm.GetParameterInput
-	dstGetParameterInput ssm.GetParameterInput
-}
 
 type Receiver interface {
 	Write(ctx context.Context, st string) error
 }
 
-func GetReceiver(ctx context.Context, cfg aws.Config) (Receiver, error) {
-	var sprops getReceiverProps = getReceiverProps_DEFAULT
+func GetReceiver(ctx context.Context, cfg aws.Config) Receiver {
+	storage := os.Getenv("STORAGE_SERVICE")
 
-	ssmclient := ssm.NewFromConfig(cfg)
-
-	stg, err := ssmclient.GetParameter(ctx, &sprops.stgGetParameterInput)
-	if err != nil {
-		log.Println(err)
+	if storage == "" {
+		log.Panicln("The storage service service is empty")
 	}
 
-	storage := aws.ToString(stg.Parameter.Value)
+	destination := os.Getenv("DESTINATION")
 
-	dst, err := ssmclient.GetParameter(ctx, &sprops.dstGetParameterInput)
-	if err != nil {
-		log.Println(err)
+	if storage == "" {
+		log.Panicln("The destination is empty")
 	}
-
-	destination := aws.ToString(dst.Parameter.Value)
 
 	if storage == "DYNAMODB" {
 		return dynamoDbReceiver{
 			*dynamodb.NewFromConfig(cfg),
 			destination,
-		}, nil
+		}
 	}
 
 	if storage == "S3" {
 		return s3Receiver{
 			*s3.NewFromConfig(cfg),
 			destination,
-		}, nil
+		}
 	}
 
-	return nil, err // nil pointer desreference
-}
-
-// CONFIGURATIONS
-
-var getReceiverProps_DEFAULT getReceiverProps = getReceiverProps{
-	stgGetParameterInput: ssm.GetParameterInput{
-		Name: aws.String("STORAGE_SOLUTION"),
-	},
-	dstGetParameterInput: ssm.GetParameterInput{
-		Name: aws.String("DESTINATION"),
-	},
+	return nil
 }
