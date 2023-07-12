@@ -107,10 +107,10 @@ func (mo *DoModel) FailureQueuePolicy() awsiam.PolicyStatement {
 
 // SETTINGS
 var DoModelIds_DEFAULT DoModelIds = DoModelIds{
-	ConstructId:    jsii.String("MODEL-resource-domodel-default"),
-	FunctionId:     jsii.String("MODEL-resource-function-default"),
-	SuccessQueueId: jsii.String("MODEL-resource-successqueue-default"),
-	FailureQueueId: jsii.String("MODEL-resource-failurequeue-default"),
+	ConstructId:    jsii.String("DoModel-default"),
+	FunctionId:     jsii.String("function-default"),
+	SuccessQueueId: jsii.String("successqueue-default"),
+	FailureQueueId: jsii.String("failurequeue-default"),
 }
 
 var DoModelProps_DEFAULT DoModelProps = DoModelProps{

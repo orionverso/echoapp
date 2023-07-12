@@ -2,6 +2,7 @@ package choice
 
 import (
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsssm"
+	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
 )
 
@@ -37,6 +38,7 @@ func (props *DiscoverModelProps) Destination() *awsssm.StringParameterProps {
 }
 
 type DiscoverModel struct {
+	constructs.Construct
 	service     awsssm.StringParameter
 	destination awsssm.StringParameter
 }
@@ -51,8 +53,9 @@ func (mo *DiscoverModel) Destination() awsssm.StringParameter {
 
 // SETTINGS
 var DiscoverModelIds_DEFAULT DiscoverModelIds = DiscoverModelIds{
-	ServiceId:     jsii.String("DiscoverModel-serviceparameter-default"),
-	DestinationId: jsii.String("DiscoverModel-destinationparameter-default"),
+	ConstructId:   jsii.String("DiscoverModel-default"),
+	ServiceId:     jsii.String("serviceparameter-default"),
+	DestinationId: jsii.String("destinationparameter-default"),
 }
 
 var DiscoverModelProps_DEFAULT DiscoverModelProps = DiscoverModelProps{

@@ -21,10 +21,10 @@ type ReceiveEchoWriteEchoProps struct {
 // DEVELOPMENT
 var ReceiveEchoWriteEchoIds_DEV ReceiveEchoWriteEchoIds = ReceiveEchoWriteEchoIds{
 	ReceiveRequestDoActionModelIds: ReceiveRequestDoActionModelIds{
-		ConstructId:     jsii.String("ReceiveEchoWriteEcho-resource-receivemodel-default"),
-		LambdaRestApiId: jsii.String("ReceiveEchoWriteEcho-resource-lambdarestapi-default"),
+		ConstructId:     jsii.String("ReceiveEchoWriteEcho-dev"),
+		LambdaRestApiId: jsii.String("lambdarestapi-dev"),
 		DoActionIds:     &function.WriteEchoIds_DEV,
-		LogGroupId:      jsii.String("ReceiveEchoWriteEcho-resource-loggroup-default"),
+		LogGroupId:      jsii.String("loggroup-dev"),
 	},
 }
 
@@ -54,10 +54,10 @@ var ReceiveEchoWriteEchoProps_DEV ReceiveEchoWriteEchoProps = ReceiveEchoWriteEc
 // PRODUCTION
 var ReceiveEchoWriteEchoIds_PROD ReceiveEchoWriteEchoIds = ReceiveEchoWriteEchoIds{
 	ReceiveRequestDoActionModelIds: ReceiveRequestDoActionModelIds{
-		ConstructId:     jsii.String("ReceiveEchoWriteEcho-resource-receivemodel-default"),
-		LambdaRestApiId: jsii.String("ReceiveEchoWriteEcho-resource-lambdarestapi-default"),
+		ConstructId:     jsii.String("ReceiveEchoWriteEcho-prod"),
+		LambdaRestApiId: jsii.String("lambdarestapi-prod"),
 		DoActionIds:     &function.WriteEchoIds_PROD,
-		LogGroupId:      jsii.String("ReceiveEchoWriteEcho-resource-loggroup-default"),
+		LogGroupId:      jsii.String("loggroup-prod"),
 	},
 }
 

@@ -58,8 +58,8 @@ func (mo *SaveBlockModel) Choice() choice.DiscoverStorage {
 
 // SETTINGS
 var SaveBlockModelIds_DEFAULT SaveBlockModelIds = SaveBlockModelIds{
-	ConstructId:        jsii.String("MODEL-table-construct-default"),
-	TableId:            jsii.String("MODEL-table-resource-default"),
+	ConstructId:        jsii.String("SaveModel-default"),
+	TableId:            jsii.String("table-default"),
 	DiscoverStorageIds: &choice.DiscoverModelIds_DEFAULT,
 }
 

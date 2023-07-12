@@ -19,7 +19,7 @@ func (id *SaveModelIds) Bucket() *string {
 }
 
 func (id *SaveModelIds) Construct() *string {
-	return id.BucketId
+	return id.ConstructId
 }
 
 func (id *SaveModelIds) Choice() choice.DiscoverStorageIds {
@@ -58,8 +58,8 @@ func (mo *SaveModel) Choice() choice.DiscoverStorage {
 
 // SETTINGS
 var SaveModelIds_DEFAULT SaveModelIds = SaveModelIds{
-	ConstructId:        jsii.String("MODEL-resource-construct-default"),
-	BucketId:           jsii.String("MODEL-resource-bucket-default"),
+	ConstructId:        jsii.String("SaveModel-default"),
+	BucketId:           jsii.String("bucket-default"),
 	DiscoverStorageIds: &choice.DiscoverModelIds_DEFAULT,
 }
 

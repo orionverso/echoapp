@@ -19,8 +19,8 @@ type ReceiveEchoWriteEchoProps struct {
 // DEVELOPMENT
 var ReceiveEchoWriteEchoIds_DEV ReceiveEchoWriteEchoIds = ReceiveEchoWriteEchoIds{
 	ReceiveRequestDoActionModelIds: ReceiveRequestDoActionModelIds{
-		ConstructId:                             jsii.String("ReceiveEchoWriteEcho-resource-construct-dev"),
-		ApplicationLoadBalancedFargateServiceId: jsii.String("ReceiveEchoWriteEcho-resource-applicationloadbalancedfargateservice-dev"),
+		ConstructId:                             jsii.String("ReceiveEchoWriteEcho-dev"),
+		ApplicationLoadBalancedFargateServiceId: jsii.String("applicationloadbalancedfargateservice-dev"),
 		DistributeImageIds:                      &repository.DistributeGoServerImageIds_DEV,
 	},
 }
@@ -41,8 +41,8 @@ var ReceiveEchoWriteEchoProps_DEV ReceiveEchoWriteEchoProps = ReceiveEchoWriteEc
 // PRODUCTION
 var ReceiveEchoWriteEchoIds_PROD ReceiveEchoWriteEchoIds = ReceiveEchoWriteEchoIds{
 	ReceiveRequestDoActionModelIds: ReceiveRequestDoActionModelIds{
-		ConstructId:                             jsii.String("ReceiveEchoWriteEcho-resource-construct-prod"),
-		ApplicationLoadBalancedFargateServiceId: jsii.String("ReceiveEchoWriteEcho-resource-applicationloadbalancedfargateservice-prod"),
+		ConstructId:                             jsii.String("ReceiveEchoWriteEcho-prod"),
+		ApplicationLoadBalancedFargateServiceId: jsii.String("applicationloadbalancedfargateservice-prod"),
 		DistributeImageIds:                      &repository.DistributeGoServerImageIds_PROD,
 	},
 }

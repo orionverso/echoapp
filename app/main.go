@@ -22,7 +22,7 @@ func NewCastorStack(scope constructs.Construct, id string, props *CastorStackPro
 	stack := awscdk.NewStack(scope, &id, &sprops)
 
 	// repository.NewDistributeImage(stack, nil, nil)
-
+	// bucket.NewSaveFile(stack, &bucket.SaveEchoIds_DEV, &bucket.SaveEchoProps_DEV)
 	table.NewSaveBlockData(stack, &table.SaveEchoIds_DEV, &table.SaveEchoProps_DEV)
 
 	return stack

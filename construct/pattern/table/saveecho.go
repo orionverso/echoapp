@@ -20,8 +20,8 @@ type SaveEchoProps struct {
 // DEVELOPMENT
 var SaveEchoIds_DEV SaveEchoIds = SaveEchoIds{
 	SaveBlockModelIds: SaveBlockModelIds{
-		TableId:            jsii.String("SaveEcho-table-resource-dev"),
-		ConstructId:        jsii.String("SaveEcho-construct-dev"),
+		ConstructId:        jsii.String("SaveEcho-dev"),
+		TableId:            jsii.String("table-dev"),
 		DiscoverStorageIds: &choice.DiscoverDynamoDbIds_DEV,
 	},
 }
@@ -42,8 +42,8 @@ var SaveEchoProps_DEV SaveEchoProps = SaveEchoProps{
 // PRODUCTION
 var SaveEchoIds_PROD SaveEchoIds = SaveEchoIds{
 	SaveBlockModelIds: SaveBlockModelIds{
-		TableId:            jsii.String("SaveEcho-table-resource-prod"),
-		ConstructId:        jsii.String("SaveEcho-construct-prod"),
+		TableId:            jsii.String("SaveEcho-prod"),
+		ConstructId:        jsii.String("SaveEcho-prod"),
 		DiscoverStorageIds: &choice.DiscoverDynamoDbIds_PROD,
 	},
 }

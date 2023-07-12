@@ -87,10 +87,10 @@ func (mo *ReceiveRequestDoActionModel) LogGroupLogDestination() awsapigateway.Lo
 
 // SETTINGS
 var ReceiveRequestDoActionModelIds_DEFAULT ReceiveRequestDoActionModelIds = ReceiveRequestDoActionModelIds{
-	ConstructId:     jsii.String("MODEL-resource-receivemodel-default"),
-	LambdaRestApiId: jsii.String("MODEL-resource-lambdarestapi-default"),
+	ConstructId:     jsii.String("ReceiveRequestDoActionModel-default"),
+	LambdaRestApiId: jsii.String("lambdarestapi-default"),
 	DoActionIds:     &function.DoModelIds_DEFAULT,
-	LogGroupId:      jsii.String("MODEL-resource-loggroup-default"),
+	LogGroupId:      jsii.String("loggroup-default"),
 }
 
 var ReceiveRequestDoActionModelProps_DEFAULT ReceiveRequestDoActionModelProps = ReceiveRequestDoActionModelProps{

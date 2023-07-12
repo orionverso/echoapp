@@ -37,6 +37,7 @@ func NewSaveBlockData(scope constructs.Construct, id SaveBlockDataIds, props Sav
 		sid = id
 	}
 
+	// this := constructs.NewConstruct(scope, sid.Construct())
 	this := constructs.NewConstruct(scope, sid.Construct())
 
 	table := awsdynamodb.NewTable(this, sid.Table(), sprops.Table())

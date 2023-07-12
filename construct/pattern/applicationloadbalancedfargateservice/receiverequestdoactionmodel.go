@@ -67,8 +67,8 @@ func (mo *ReceiveRequestDoActionModel) DistributeImage() repository.DistributeIm
 
 // SETTINGS
 var ReceiveRequestDoActionModelIds_DEFAULT ReceiveRequestDoActionModelIds = ReceiveRequestDoActionModelIds{
-	ConstructId:                             jsii.String("MODEL-resource-construct-default"),
-	ApplicationLoadBalancedFargateServiceId: jsii.String("MODEL-resource-applicationloadbalancedfargateservice-default"),
+	ConstructId:                             jsii.String("ReceiveRequestDoActionModel-default"),
+	ApplicationLoadBalancedFargateServiceId: jsii.String("applicationloadbalancedfargateservice-default"),
 	DistributeImageIds:                      &repository.DistributeModelIds_DEFAULT,
 }
 

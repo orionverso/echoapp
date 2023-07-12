@@ -23,10 +23,10 @@ type WriteEchoProps struct {
 // DEVELOPMENT
 var WriteEchoIds_DEV WriteEchoIds = WriteEchoIds{
 	DoModelIds: DoModelIds{
-		ConstructId:    jsii.String("WriteEcho-resource-construct-dev"),
-		FunctionId:     jsii.String("WriteEcho-resource-function-dev"),
-		SuccessQueueId: jsii.String("WriteEcho-resource-successqueue-dev"),
-		FailureQueueId: jsii.String("WriteEcho-resource-failurequeue-dev"),
+		ConstructId:    jsii.String("WriteEcho-dev"),
+		FunctionId:     jsii.String("function-dev"),
+		SuccessQueueId: jsii.String("successqueue-dev"),
+		FailureQueueId: jsii.String("failurequeue-dev"),
 	},
 }
 
@@ -66,10 +66,10 @@ var WriteEchoProps_DEV WriteEchoProps = WriteEchoProps{
 // PRODUCTION
 var WriteEchoIds_PROD WriteEchoIds = WriteEchoIds{
 	DoModelIds: DoModelIds{
-		ConstructId:    jsii.String("WriteEcho-resource-construct-prod"),
-		FunctionId:     jsii.String("WriteEcho-resource-function-prod"),
-		SuccessQueueId: jsii.String("WriteEcho-resource-successqueue-prod"),
-		FailureQueueId: jsii.String("WriteEcho-resource-failurequeue-prod"),
+		ConstructId:    jsii.String("WriteEcho-prod"),
+		FunctionId:     jsii.String("function-prod"),
+		SuccessQueueId: jsii.String("successqueue-prod"),
+		FailureQueueId: jsii.String("failurequeue-prod"),
 	},
 }
 

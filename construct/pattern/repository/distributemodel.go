@@ -39,8 +39,8 @@ func (mo *DistributeModel) Repository() awsecr.Repository {
 
 // SETTINGS
 var DistributeModelIds_DEFAULT DistributeModelIds = DistributeModelIds{
-	ConstructId:  jsii.String("MODEL-resource-distributemodel-default"),
-	RepositoryId: jsii.String("MODEL-resource-repository-default"),
+	ConstructId:  jsii.String("DistributeModel-default"),
+	RepositoryId: jsii.String("repository-default"),
 }
 
 var DistributeModelProps_DEFAULT DistributeModelProps = DistributeModelProps{

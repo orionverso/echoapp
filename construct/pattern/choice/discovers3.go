@@ -17,8 +17,9 @@ type DiscoverS3Props struct {
 // DEVELOPMENT
 var DiscoverS3Ids_DEV DiscoverS3Ids = DiscoverS3Ids{
 	DiscoverModelIds: DiscoverModelIds{
-		ServiceId:     jsii.String("Discover-serviceparameter-dev"),
-		DestinationId: jsii.String("Discover-destinationparameter-dev"),
+		ConstructId:   jsii.String("DiscoverStorage-dev"),
+		ServiceId:     jsii.String("serviceparameter-dev"),
+		DestinationId: jsii.String("destinationparameter-dev"),
 	},
 }
 
@@ -30,7 +31,7 @@ var DiscoverS3Props_DEV DiscoverS3Props = DiscoverS3Props{
 		},
 		DestinationProps: &awsssm.StringParameterProps{
 			ParameterName: jsii.String("DESTINATION"),
-			// StringValue:   At runtime,
+			StringValue:   jsii.String("UNKNOW-STORAGE-SERVICE"), // overwrite at runtime
 		},
 	},
 }
@@ -38,8 +39,9 @@ var DiscoverS3Props_DEV DiscoverS3Props = DiscoverS3Props{
 // PRODUCTION
 var DiscoverS3Ids_PROD DiscoverS3Ids = DiscoverS3Ids{
 	DiscoverModelIds: DiscoverModelIds{
-		ServiceId:     jsii.String("Discover-serviceparameter-prod"),
-		DestinationId: jsii.String("Discover-destinationparameter-prod"),
+		ConstructId:   jsii.String("DiscoverStorage-prod"),
+		ServiceId:     jsii.String("serviceparameter-prod"),
+		DestinationId: jsii.String("destinationparameter-prod"),
 	},
 }
 
@@ -51,7 +53,7 @@ var DiscoverS3Props_PROD DiscoverS3Props = DiscoverS3Props{
 		},
 		DestinationProps: &awsssm.StringParameterProps{
 			ParameterName: jsii.String("DESTINATION"),
-			// StringValue:   At runtime,
+			StringValue:   jsii.String("UNKNOW-STORAGE-SERVICE"), // overwrite at runtime
 		},
 	},
 }

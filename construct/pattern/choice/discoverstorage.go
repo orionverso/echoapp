@@ -17,6 +17,7 @@ type DiscoverStorageProps interface {
 }
 
 type DiscoverStorage interface {
+	constructs.Construct
 	Service() awsssm.StringParameter
 	Destination() awsssm.StringParameter
 }
@@ -33,10 +34,13 @@ func NewDiscoverStorage(scope constructs.Construct, id DiscoverStorageIds, props
 		sid = id
 	}
 
-	service := awsssm.NewStringParameter(scope, sid.Service(), sprops.Service())
-	destination := awsssm.NewStringParameter(scope, sid.Destination(), sprops.Destination())
+	this := constructs.NewConstruct(scope, sid.Construct())
+
+	service := awsssm.NewStringParameter(this, sid.Service(), sprops.Service())
+	destination := awsssm.NewStringParameter(this, sid.Destination(), sprops.Destination())
 
 	var component DiscoverStorage = &DiscoverModel{
+		Construct:   this,
 		service:     service,
 		destination: destination,
 	}
