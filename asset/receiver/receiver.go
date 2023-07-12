@@ -23,22 +23,20 @@ func GetReceiver(ctx context.Context, cfg aws.Config) (Receiver, error) {
 	var sprops getReceiverProps = getReceiverProps_DEFAULT
 
 	ssmclient := ssm.NewFromConfig(cfg)
+
 	stg, err := ssmclient.GetParameter(ctx, &sprops.stgGetParameterInput)
 	if err != nil {
 		log.Println(err)
 	}
 
 	storage := aws.ToString(stg.Parameter.Value)
-	log.Println("Storage:", storage)
 
-	sprops.dstGetParameterInput.Name = stg.Parameter.Value
 	dst, err := ssmclient.GetParameter(ctx, &sprops.dstGetParameterInput)
 	if err != nil {
 		log.Println(err)
 	}
 
 	destination := aws.ToString(dst.Parameter.Value)
-	log.Println("Destination:", destination)
 
 	if storage == "DYNAMODB" {
 		return dynamoDbReceiver{
@@ -54,7 +52,7 @@ func GetReceiver(ctx context.Context, cfg aws.Config) (Receiver, error) {
 		}, nil
 	}
 
-	return nil, err
+	return nil, err // nil pointer desreference
 }
 
 // CONFIGURATIONS
@@ -63,5 +61,7 @@ var getReceiverProps_DEFAULT getReceiverProps = getReceiverProps{
 	stgGetParameterInput: ssm.GetParameterInput{
 		Name: aws.String("STORAGE_SOLUTION"),
 	},
-	dstGetParameterInput: ssm.GetParameterInput{},
+	dstGetParameterInput: ssm.GetParameterInput{
+		Name: aws.String("DESTINATION"),
+	},
 }

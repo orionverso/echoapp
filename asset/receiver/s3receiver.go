@@ -37,7 +37,7 @@ func (rv s3Receiver) Write(ctx context.Context, st string) error {
 	return nil
 }
 
-// CONFIGURATIONS
+// SETTINGS
 var s3ReceiverProps_DEFAULT s3ReceiverProps = s3ReceiverProps{
 	putObjectInput: s3.PutObjectInput{
 		ContentType: aws.String("application/json"),

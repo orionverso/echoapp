@@ -41,7 +41,7 @@ func NewSaveFile(scope constructs.Construct, id SaveFileIds, props SaveFileProps
 
 	resource := awss3.NewBucket(this, sid.Bucket(), sprops.Bucket())
 
-	sprops.AddDestinationToChoice(resource.BucketArn())
+	sprops.AddDestinationToChoice(resource.BucketName())
 
 	ch := choice.NewDiscoverStorage(this, sid.Choice(), sprops.Choice())
 

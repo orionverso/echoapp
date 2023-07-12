@@ -42,7 +42,7 @@ func NewSaveBlockData(scope constructs.Construct, id SaveBlockDataIds, props Sav
 
 	table := awsdynamodb.NewTable(this, sid.Table(), sprops.Table())
 
-	sprops.AddDestinationToChoice(table.TableArn())
+	sprops.AddDestinationToChoice(table.TableName())
 
 	choice := choice.NewDiscoverStorage(this, sid.Choice(), sprops.Choice())
 

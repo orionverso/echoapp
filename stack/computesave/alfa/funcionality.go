@@ -40,16 +40,16 @@ func NewFuncionality(scope constructs.Construct, id FuncionalityIds, props Funci
 
 	doer := lambdarestapi.NewReceiveRequestDoAction(stack, sid.ReceiveRequestDoAction(), sprops.ReceiveRequestDoAction())
 
-	saver := bucket.NewSaveFile(stack, sid.SaveFile(), sprops.SaveFile())
+	save := bucket.NewSaveFile(stack, sid.SaveFile(), sprops.SaveFile())
 
-	saver.Bucket().GrantWrite(doer.DoAction().Function().Role(), jsii.String("*"), jsii.Strings("*"))
-	saver.Choice().Service().GrantRead(doer.DoAction().Function().Role())
-	saver.Choice().Service().GrantRead(doer.DoAction().Function().Role())
+	save.Bucket().GrantWrite(doer.DoAction().Function(), jsii.String("*"), jsii.Strings("*"))
+	save.Choice().Service().GrantRead(doer.DoAction().Function())
+	save.Choice().Destination().GrantRead(doer.DoAction().Function())
 
 	var component Funcionality = &FuncionalityModel{
 		Stack:                  stack,
 		receiverequestdoaction: doer,
-		savefile:               saver,
+		savefile:               save,
 	}
 
 	return component

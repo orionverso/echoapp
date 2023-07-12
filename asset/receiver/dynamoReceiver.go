@@ -47,8 +47,7 @@ func (rv dynamoDbReceiver) Write(ctx context.Context, st string) error {
 	return nil
 }
 
-// CONFIGURATIONS
-
+// SETTINGS
 // ---DEFAULT---
 var itemProps_DEFAULT itemProps = itemProps{
 	index:             "id",
