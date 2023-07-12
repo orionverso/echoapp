@@ -1,7 +1,7 @@
 package main
 
 import (
-	computesave "castor/stack/computesave/alfa"
+	computesave "castor/stack/computesave/delta"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 
