@@ -101,9 +101,9 @@ var ReceiveRequestDoActionModelProps_DEFAULT ReceiveRequestDoActionModelProps = 
 		FailOnWarnings: jsii.Bool(true),
 		RestApiName:    jsii.String("EchoApi"),
 		DeployOptions: &awsapigateway.StageOptions{
-			CachingEnabled: jsii.Bool(true),
 			MetricsEnabled: jsii.Bool(true),
 			LoggingLevel:   awsapigateway.MethodLoggingLevel_ERROR,
+			StageName:      jsii.String("default"),
 			// AccessLogDestination: At runtime,
 		},
 	},

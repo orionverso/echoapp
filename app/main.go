@@ -1,7 +1,7 @@
 package main
 
 import (
-	"castor/construct/pattern/table"
+	computesave "castor/stack/computesave/alfa"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 
@@ -14,18 +14,16 @@ type CastorStackProps struct {
 	awscdk.StackProps
 }
 
-func NewCastorStack(scope constructs.Construct, id string, props *CastorStackProps) awscdk.Stack {
-	var sprops awscdk.StackProps
-	if props != nil {
-		sprops = props.StackProps
-	}
-	stack := awscdk.NewStack(scope, &id, &sprops)
+func NewCastorStack(scope constructs.Construct, id string, props *CastorStackProps) /*awscdk.Stack*/ {
+	// var sprops awscdk.StackProps
+	// if props != nil {
+	// 	sprops = props.StackProps
+	// }
+	// stack := awscdk.NewStack(scope, &id, &sprops)
 
-	// repository.NewDistributeImage(stack, nil, nil)
-	// bucket.NewSaveFile(stack, &bucket.SaveEchoIds_DEV, &bucket.SaveEchoProps_DEV)
-	table.NewSaveBlockData(stack, &table.SaveEchoIds_DEV, &table.SaveEchoProps_DEV)
+	computesave.NewFuncionality(scope, &computesave.EchoSaveIds_DEV, &computesave.EchoSaveProps_DEV)
 
-	return stack
+	// return stack
 }
 
 func main() {

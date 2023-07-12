@@ -37,9 +37,9 @@ var ReceiveEchoWriteEchoProps_DEV ReceiveEchoWriteEchoProps = ReceiveEchoWriteEc
 			FailOnWarnings: jsii.Bool(true),
 			RestApiName:    jsii.String("EchoApi"),
 			DeployOptions: &awsapigateway.StageOptions{
-				CachingEnabled: jsii.Bool(true),
 				MetricsEnabled: jsii.Bool(true),
 				LoggingLevel:   awsapigateway.MethodLoggingLevel_ERROR,
+				StageName:      jsii.String("dev"),
 				// AccessLogDestination: At runtime,
 			},
 		},
@@ -73,6 +73,7 @@ var ReceiveEchoWriteEchoProps_PROD ReceiveEchoWriteEchoProps = ReceiveEchoWriteE
 				CachingEnabled: jsii.Bool(true),
 				MetricsEnabled: jsii.Bool(true),
 				LoggingLevel:   awsapigateway.MethodLoggingLevel_ERROR,
+				StageName:      jsii.String("prod"),
 				// AccessLogDestination: At runtime,
 			},
 		},
