@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"os/exec"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
@@ -14,7 +15,9 @@ type Receiver interface {
 	Write(ctx context.Context, st string) error
 }
 
-func GetReceiver(ctx context.Context, cfg aws.Config) Receiver {
+func GetReceiverFromEnv(ctx context.Context, cfg aws.Config) Receiver {
+	exec.Command("bash", "-c", "source ~/.zsh_envar")
+
 	storage := os.Getenv("STORAGE_SERVICE")
 
 	if storage == "" {

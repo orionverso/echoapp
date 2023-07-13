@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"server/receiver"
 
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -31,12 +32,12 @@ func main() {
 
 func postHandler(w http.ResponseWriter, r *http.Request) {
 	ctx = context.TODO()
-	cfg, err := config.LoadDefaultConfig(ctx)
+	cfg, err := config.LoadDefaultConfig(ctx, LoadDefaultConfigProps_BINARY_IN_LOCAL.profile, LoadDefaultConfigProps_BINARY_IN_LOCAL.region)
 	if err != nil {
 		log.Panicln("Config has not been loaded properly")
 	}
 
-	rec = receiver.GetReceiverFromParameter(ctx, cfg)
+	rec = receiver.GetReceiverFromEnv(ctx, cfg)
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -51,7 +52,7 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	fmt.Fprintf(w, "Thanks you for take a look. I am from a Container. See you")
+	fmt.Fprintf(w, fmt.Sprint("Thanks you for take a look. I am from a Container writing to ", os.Getenv("STORAGE_SERVICE"), ". See you"))
 }
 
 type LoadDefaultConfigProps struct {

@@ -44,8 +44,10 @@ func NewFuncionality(scope constructs.Construct, id FuncionalityIds, props Funci
 	save := bucket.NewSaveFile(stack, sid.SaveFile(), sprops.SaveFile())
 
 	save.Bucket().GrantWrite(doerrole, jsii.String("*"), jsii.Strings("*"))
-	save.Choice().Service().GrantRead(doerrole)
-	save.Choice().Destination().GrantRead(doerrole)
+
+	defaultcontainer := doer.ApplicationLoadBalancedFargateService().TaskDefinition().DefaultContainer()
+	defaultcontainer.AddEnvironment(jsii.String("STORAGE_SERVICE"), jsii.String("S3"))
+	defaultcontainer.AddEnvironment(jsii.String("DESTINATION"), save.Bucket().BucketName())
 
 	var component Funcionality = &FuncionalityModel{
 		Stack:                  stack,

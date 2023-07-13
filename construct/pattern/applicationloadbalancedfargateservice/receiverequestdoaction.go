@@ -55,6 +55,5 @@ func NewReceiveRequestDoAction(scope constructs.Construct, id ReceiveRequestDoAc
 		applicationloadbalancedfargateservice: resource,
 		distributeimage:                       repo,
 	}
-
 	return component
 }

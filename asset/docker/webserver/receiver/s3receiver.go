@@ -19,7 +19,6 @@ type s3Receiver struct {
 }
 
 func (rv s3Receiver) Write(ctx context.Context, st string) error {
-
 	var sprops s3ReceiverProps = s3ReceiverProps_DEFAULT
 
 	body := []byte(st)
@@ -29,7 +28,6 @@ func (rv s3Receiver) Write(ctx context.Context, st string) error {
 	sprops.putObjectInput.Body = bytes.NewReader(body)
 
 	_, err := rv.PutObject(ctx, &sprops.putObjectInput)
-
 	if err != nil {
 		log.Println(err)
 		return err
@@ -39,8 +37,7 @@ func (rv s3Receiver) Write(ctx context.Context, st string) error {
 	return nil
 }
 
-//CONFIGURATIONS
-
+// SETTINGS
 var s3ReceiverProps_DEFAULT s3ReceiverProps = s3ReceiverProps{
 	putObjectInput: s3.PutObjectInput{
 		ContentType: aws.String("application/json"),

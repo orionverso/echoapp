@@ -6,6 +6,7 @@ import (
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/constructs-go/constructs/v10"
+	"github.com/aws/jsii-runtime-go"
 )
 
 type FuncionalityIds interface {
@@ -42,9 +43,11 @@ func NewFuncionality(scope constructs.Construct, id FuncionalityIds, props Funci
 
 	save := table.NewSaveBlockData(stack, sid.SaveBlockData(), sprops.SaveBlockData())
 
-	save.Table().Grant(doerrole)
-	save.Choice().Service().GrantRead(doerrole)
-	save.Choice().Destination().GrantRead(doerrole)
+	save.Table().GrantWriteData(doerrole)
+
+	defaultcontainer := doer.ApplicationLoadBalancedFargateService().TaskDefinition().DefaultContainer()
+	defaultcontainer.AddEnvironment(jsii.String("STORAGE_SERVICE"), jsii.String("DYNAMODB"))
+	defaultcontainer.AddEnvironment(jsii.String("DESTINATION"), save.Table().TableName())
 
 	var component Funcionality = &FuncionalityModel{
 		Stack:                  stack,

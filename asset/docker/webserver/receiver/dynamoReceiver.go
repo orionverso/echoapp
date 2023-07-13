@@ -31,7 +31,6 @@ type dynamoDbReceiver struct {
 }
 
 func (rv dynamoDbReceiver) Write(ctx context.Context, st string) error {
-
 	var sprops dynamoDbReceiverProps = dynamoDbReceiverProps_DEFAULT
 
 	sprops.putItemInput.TableName = aws.String(rv.destination)
@@ -48,8 +47,7 @@ func (rv dynamoDbReceiver) Write(ctx context.Context, st string) error {
 	return nil
 }
 
-// CONFIGURATIONS
-
+// SETTINGS
 // ---DEFAULT---
 var itemProps_DEFAULT itemProps = itemProps{
 	index:             "id",
