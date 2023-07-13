@@ -26,7 +26,7 @@ var DiscoverDynamoDbIds_DEV DiscoverDynamoDbIds = DiscoverDynamoDbIds{
 var DiscoverDynamoDbProps_DEV DiscoverDynamoDbProps = DiscoverDynamoDbProps{
 	DiscoverModelProps: DiscoverModelProps{
 		ServiceProps: &awsssm.StringParameterProps{
-			ParameterName: jsii.String("STORAGE_SOLUTION"),
+			ParameterName: jsii.String("STORAGE_SERVICE"),
 			StringValue:   jsii.String("DYNAMODB"),
 		}, DestinationProps: &awsssm.StringParameterProps{
 			ParameterName: jsii.String("DESTINATION"),
@@ -47,7 +47,7 @@ var DiscoverDynamoDbIds_PROD DiscoverDynamoDbIds = DiscoverDynamoDbIds{
 var DiscoverDynamoDbProps_PROD DiscoverDynamoDbProps = DiscoverDynamoDbProps{
 	DiscoverModelProps: DiscoverModelProps{
 		ServiceProps: &awsssm.StringParameterProps{
-			ParameterName: jsii.String("STORAGE_SOLUTION"),
+			ParameterName: jsii.String("STORAGE_SERVICE"),
 			StringValue:   jsii.String("DYNAMODB"),
 		},
 		DestinationProps: &awsssm.StringParameterProps{

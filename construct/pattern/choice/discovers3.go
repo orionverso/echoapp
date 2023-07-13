@@ -26,7 +26,7 @@ var DiscoverS3Ids_DEV DiscoverS3Ids = DiscoverS3Ids{
 var DiscoverS3Props_DEV DiscoverS3Props = DiscoverS3Props{
 	DiscoverModelProps: DiscoverModelProps{
 		ServiceProps: &awsssm.StringParameterProps{
-			ParameterName: jsii.String("STORAGE_SOLUTION"),
+			ParameterName: jsii.String("STORAGE_SERVICE"),
 			StringValue:   jsii.String("S3"),
 		},
 		DestinationProps: &awsssm.StringParameterProps{
@@ -48,7 +48,7 @@ var DiscoverS3Ids_PROD DiscoverS3Ids = DiscoverS3Ids{
 var DiscoverS3Props_PROD DiscoverS3Props = DiscoverS3Props{
 	DiscoverModelProps: DiscoverModelProps{
 		ServiceProps: &awsssm.StringParameterProps{
-			ParameterName: jsii.String("STORAGE_SOLUTION"),
+			ParameterName: jsii.String("STORAGE_SERVICE"),
 			StringValue:   jsii.String("S3"),
 		},
 		DestinationProps: &awsssm.StringParameterProps{

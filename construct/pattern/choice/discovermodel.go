@@ -60,7 +60,7 @@ var DiscoverModelIds_DEFAULT DiscoverModelIds = DiscoverModelIds{
 
 var DiscoverModelProps_DEFAULT DiscoverModelProps = DiscoverModelProps{
 	ServiceProps: &awsssm.StringParameterProps{
-		ParameterName: jsii.String("STORAGE_SOLUTION"),
+		ParameterName: jsii.String("STORAGE_SERVICE"),
 		StringValue:   jsii.String("UNKNOW-STORAGE-SERVICE"),
 	},
 	DestinationProps: &awsssm.StringParameterProps{
