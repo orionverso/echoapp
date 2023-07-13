@@ -1,8 +1,8 @@
-package gamma
+package delta
 
 import (
+	"castor/construct/highlevel/bucket"
 	fargate "castor/construct/pattern/applicationloadbalancedfargateservice"
-	"castor/construct/pattern/bucket"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/constructs-go/constructs/v10"

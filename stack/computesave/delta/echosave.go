@@ -1,8 +1,8 @@
-package gamma
+package delta
 
 import (
+	"castor/construct/highlevel/bucket"
 	fargate "castor/construct/pattern/applicationloadbalancedfargateservice"
-	"castor/construct/pattern/bucket"
 	"castor/stack/environment"
 
 	"github.com/aws/jsii-runtime-go"

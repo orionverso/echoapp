@@ -1,8 +1,8 @@
 package alfa
 
 import (
+	"castor/construct/highlevel/table"
 	"castor/construct/pattern/lambdarestapi"
-	"castor/construct/pattern/table"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"

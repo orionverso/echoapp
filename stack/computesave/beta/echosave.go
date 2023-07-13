@@ -1,8 +1,8 @@
 package alfa
 
 import (
+	"castor/construct/highlevel/table"
 	"castor/construct/pattern/lambdarestapi"
-	"castor/construct/pattern/table"
 	"castor/stack/environment"
 
 	"github.com/aws/jsii-runtime-go"

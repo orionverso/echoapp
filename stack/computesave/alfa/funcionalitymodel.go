@@ -1,7 +1,7 @@
 package alfa
 
 import (
-	"castor/construct/pattern/bucket"
+	"castor/construct/highlevel/bucket"
 	"castor/construct/pattern/lambdarestapi"
 	"castor/stack/environment"
 

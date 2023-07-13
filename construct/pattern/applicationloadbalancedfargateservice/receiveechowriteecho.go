@@ -1,7 +1,7 @@
 package applicationloadbalancedfargateservice
 
 import (
-	"castor/construct/pattern/repository"
+	"castor/construct/highlevel/repository"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsecspatterns"
 	"github.com/aws/jsii-runtime-go"
