@@ -1,8 +1,6 @@
 package bucket
 
 import (
-	"castor/construct/pattern/choice"
-
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awss3"
 	"github.com/aws/jsii-runtime-go"
@@ -11,7 +9,6 @@ import (
 type SaveModelIds struct {
 	ConstructId *string
 	BucketId    *string
-	choice.DiscoverStorageIds
 }
 
 func (id *SaveModelIds) Bucket() *string {
@@ -22,45 +19,26 @@ func (id *SaveModelIds) Construct() *string {
 	return id.ConstructId
 }
 
-func (id *SaveModelIds) Choice() choice.DiscoverStorageIds {
-	return id.DiscoverStorageIds
-}
-
 type SaveModelProps struct {
 	*awss3.BucketProps
-	choice.DiscoverStorageProps
 }
 
 func (props *SaveModelProps) Bucket() *awss3.BucketProps {
 	return props.BucketProps
 }
 
-func (props *SaveModelProps) Choice() choice.DiscoverStorageProps {
-	return props.DiscoverStorageProps
-}
-
-func (props *SaveModelProps) AddDestinationToChoice(arn *string) {
-	props.DiscoverStorageProps.Destination().StringValue = arn
-}
-
 type SaveModel struct {
 	bucket awss3.Bucket
-	choice choice.DiscoverStorage
 }
 
 func (mo *SaveModel) Bucket() awss3.Bucket {
 	return mo.bucket
 }
 
-func (mo *SaveModel) Choice() choice.DiscoverStorage {
-	return mo.choice
-}
-
 // SETTINGS
 var SaveModelIds_DEFAULT SaveModelIds = SaveModelIds{
-	ConstructId:        jsii.String("SaveModel-default"),
-	BucketId:           jsii.String("bucket-default"),
-	DiscoverStorageIds: &choice.DiscoverModelIds_DEFAULT,
+	ConstructId: jsii.String("SaveModel-default"),
+	BucketId:    jsii.String("bucket-default"),
 }
 
 var SaveModelProps_DEFAULT SaveModelProps = SaveModelProps{
@@ -68,5 +46,4 @@ var SaveModelProps_DEFAULT SaveModelProps = SaveModelProps{
 		AutoDeleteObjects: jsii.Bool(true),
 		RemovalPolicy:     awscdk.RemovalPolicy_DESTROY,
 	},
-	DiscoverStorageProps: &choice.DiscoverModelProps_DEFAULT,
 }

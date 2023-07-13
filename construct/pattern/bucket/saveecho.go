@@ -1,8 +1,6 @@
 package bucket
 
 import (
-	"castor/construct/pattern/choice"
-
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awss3"
 	"github.com/aws/jsii-runtime-go"
@@ -20,9 +18,8 @@ type SaveEchoProps struct {
 // DEVELOPMENT
 var SaveEchoIds_DEV SaveEchoIds = SaveEchoIds{
 	SaveModelIds: SaveModelIds{
-		ConstructId:        jsii.String("SaveEcho-dev"),
-		BucketId:           jsii.String("bucket-dev"),
-		DiscoverStorageIds: &choice.DiscoverS3Ids_DEV,
+		ConstructId: jsii.String("SaveEcho-dev"),
+		BucketId:    jsii.String("bucket-dev"),
 	},
 }
 
@@ -32,16 +29,14 @@ var SaveEchoProps_DEV SaveEchoProps = SaveEchoProps{
 			AutoDeleteObjects: jsii.Bool(true),
 			RemovalPolicy:     awscdk.RemovalPolicy_DESTROY,
 		},
-		DiscoverStorageProps: &choice.DiscoverS3Props_DEV,
 	},
 }
 
 // PRODUCTION
 var SaveEchoIds_PROD SaveEchoIds = SaveEchoIds{
 	SaveModelIds: SaveModelIds{
-		ConstructId:        jsii.String("SaveEcho-prod"),
-		BucketId:           jsii.String("bucket-prod"),
-		DiscoverStorageIds: &choice.DiscoverS3Ids_PROD,
+		ConstructId: jsii.String("SaveEcho-prod"),
+		BucketId:    jsii.String("bucket-prod"),
 	},
 }
 
@@ -51,6 +46,5 @@ var SaveEchoProps_PROD SaveEchoProps = SaveEchoProps{
 			AutoDeleteObjects: jsii.Bool(true),
 			RemovalPolicy:     awscdk.RemovalPolicy_DESTROY,
 		},
-		DiscoverStorageProps: &choice.DiscoverS3Props_PROD,
 	},
 }
