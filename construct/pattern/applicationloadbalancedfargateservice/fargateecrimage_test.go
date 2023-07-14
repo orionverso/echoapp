@@ -1,4 +1,4 @@
-package lambdarestapi
+package applicationloadbalancedfargateservice
 
 import (
 	"fmt"
@@ -10,8 +10,8 @@ import (
 	"github.com/aws/jsii-runtime-go"
 )
 
-// DEVELOPMENT
-func TestSynthReceiveEchoWriteEcho_DEV(t *testing.T) {
+// DEFAULT
+func TestSynthFargateEcrImage_DEFAULT(t *testing.T) {
 	defer func() {
 		if err := recover(); err != nil {
 			t.Fail()
@@ -30,7 +30,32 @@ func TestSynthReceiveEchoWriteEcho_DEV(t *testing.T) {
 
 	stack := awscdk.NewStack(nil, nil, nil)
 
-	NewReceiveRequestDoAction(stack, &ReceiveEchoWriteEchoIds_DEV, &ReceiveEchoWriteEchoProps_DEV)
+	NewFargateEcrImage(stack, jsii.String("TestSynth_DEFAULT"), nil)
+
+	assertions.Template_FromStack(stack, nil)
+}
+
+// DEVELOPMENT
+func TestSynthFargateEcrImage_DEV(t *testing.T) {
+	defer func() {
+		if err := recover(); err != nil {
+			t.Fail()
+
+			log.Println("THE COMPONENT IS NOT SYNTHEABLE")
+			fmt.Println("----CHECK CDK ERROR---")
+			fmt.Println(err)
+			fmt.Println("----CHECK CDK ERROR---")
+			// debug.PrintStack() //+info
+		} else {
+			log.Println("THE COMPONENT IS SYNTHEABLE")
+		}
+	}()
+
+	defer jsii.Close()
+
+	stack := awscdk.NewStack(nil, nil, nil)
+
+	NewFargateEcrImage(stack, jsii.String("TestSynth_DEV"), &FargateEcrImageProps_DEV)
 
 	assertions.Template_FromStack(stack, &TemplateParsingOption_DEV)
 }
@@ -40,7 +65,7 @@ var TemplateParsingOption_DEV assertions.TemplateParsingOptions = assertions.Tem
 }
 
 // PRODUCTION
-func TestSynthReceiveEchoWriteEcho_PROD(t *testing.T) {
+func TestSynthFargateEcrImage_PROD(t *testing.T) {
 	defer func() {
 		if err := recover(); err != nil {
 			t.Fail()
@@ -59,7 +84,7 @@ func TestSynthReceiveEchoWriteEcho_PROD(t *testing.T) {
 
 	stack := awscdk.NewStack(nil, nil, nil)
 
-	NewReceiveRequestDoAction(stack, &ReceiveEchoWriteEchoIds_PROD, &ReceiveEchoWriteEchoProps_PROD)
+	NewFargateEcrImage(stack, jsii.String("TestSynth_PROD"), &FargateEcrImageProps_PROD)
 
 	assertions.Template_FromStack(stack, &TemplateParsingOption_PROD)
 }
