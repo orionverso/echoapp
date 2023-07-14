@@ -1,4 +1,4 @@
-package alfa
+package computesave
 
 import (
 	"fmt"
@@ -10,8 +10,8 @@ import (
 	"github.com/aws/jsii-runtime-go"
 )
 
-// DEVELOPMENT
-func TestSynthEchoSave_DEV(t *testing.T) {
+// DEFAULT
+func TestSynthApiWriteToTable_DEFAULT(t *testing.T) {
 	defer func() {
 		if err := recover(); err != nil {
 			t.Fail()
@@ -30,7 +30,32 @@ func TestSynthEchoSave_DEV(t *testing.T) {
 
 	stack := awscdk.NewStack(nil, nil, nil)
 
-	NewFuncionality(stack, &EchoSaveIds_DEV, &EchoSaveProps_DEV)
+	NewApiWriteToTable(stack, jsii.String("TestSynth_DEFAULT"), nil)
+
+	assertions.Template_FromStack(stack, nil)
+}
+
+// DEVELOPMENT
+func TestSynthApiWriteToTable_DEV(t *testing.T) {
+	defer func() {
+		if err := recover(); err != nil {
+			t.Fail()
+
+			log.Println("THE COMPONENT IS NOT SYNTHEABLE")
+			fmt.Println("----CHECK CDK ERROR---")
+			fmt.Println(err)
+			fmt.Println("----CHECK CDK ERROR---")
+			// debug.PrintStack() //+info
+		} else {
+			log.Println("THE COMPONENT IS SYNTHEABLE")
+		}
+	}()
+
+	defer jsii.Close()
+
+	stack := awscdk.NewStack(nil, nil, nil)
+
+	NewApiWriteToTable(stack, jsii.String("TestSynth_DEV"), &ApiWriteToTableProps_DEV)
 
 	assertions.Template_FromStack(stack, &TemplateParsingOption_DEV)
 }
@@ -40,7 +65,7 @@ var TemplateParsingOption_DEV assertions.TemplateParsingOptions = assertions.Tem
 }
 
 // PRODUCTION
-func TestSynthEchoSave_PROD(t *testing.T) {
+func TestSynthApiWriteToTable_PROD(t *testing.T) {
 	defer func() {
 		if err := recover(); err != nil {
 			t.Fail()
@@ -59,7 +84,7 @@ func TestSynthEchoSave_PROD(t *testing.T) {
 
 	stack := awscdk.NewStack(nil, nil, nil)
 
-	NewFuncionality(stack, &EchoSaveIds_PROD, &EchoSaveProps_PROD)
+	NewApiWriteToTable(stack, jsii.String("TestSynth_PROD"), &ApiWriteToTableProps_PROD)
 
 	assertions.Template_FromStack(stack, &TemplateParsingOption_PROD)
 }
