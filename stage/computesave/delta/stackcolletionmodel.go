@@ -35,13 +35,21 @@ func (props StackCollectionModelProps) Funcionality() computesave.FuncionalityPr
 }
 
 type StackCollectionModel struct {
-	awscdk.Stage
+	stage       awscdk.Stage
 	computesave computesave.Funcionality
+}
+
+func (mo StackCollectionModel) Stage() awscdk.Stage {
+	return mo.stage
+}
+
+func (mo StackCollectionModel) Funcionality() computesave.Funcionality {
+	return mo.computesave
 }
 
 // SETTINGS
 var StackCollectionModelIds_DEFAULT StackCollectionModelIds = StackCollectionModelIds{
-	StageId:        jsii.String("ComputeSaveStage-default"),
+	StageId:        jsii.String("StackColletionModelStage-default"),
 	FuncionalityId: &computesave.FuncionalityModelIds_DEFAULT,
 }
 

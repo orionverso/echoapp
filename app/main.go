@@ -1,7 +1,7 @@
 package main
 
 import (
-	computesave "castor/stack/computesave/alfa"
+	"castor/stack/pipeline"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 
@@ -21,7 +21,7 @@ func NewCastorStack(scope constructs.Construct, id string, props *CastorStackPro
 	// }
 	// stack := awscdk.NewStack(scope, &id, &sprops)
 
-	computesave.NewFuncionality(scope, &computesave.EchoSaveIds_DEV, &computesave.EchoSaveProps_DEV)
+	pipeline.NewDeployStack(scope, &pipeline.DeployModelIds_DEFAULT, &pipeline.DeployModelProps_DEFAULT)
 
 	// return stack
 }

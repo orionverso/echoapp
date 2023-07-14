@@ -18,8 +18,8 @@ type StackCollectionProps interface {
 }
 
 type StackCollection interface {
-	awscdk.Stage
-	computesave.Funcionality
+	Stage() awscdk.Stage
+	Funcionality() computesave.Funcionality
 }
 
 func NewStackCollection(scope constructs.Construct, id StackCollectionIds, props StackCollectionProps) StackCollection {
@@ -39,7 +39,7 @@ func NewStackCollection(scope constructs.Construct, id StackCollectionIds, props
 	funcionality := computesave.NewFuncionality(stage, sid.Funcionality(), sprops.Funcionality())
 
 	var component StackCollection = &StackCollectionModel{
-		Stage:       stage,
+		stage:       stage,
 		computesave: funcionality,
 	}
 

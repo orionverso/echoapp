@@ -1,6 +1,10 @@
 package pipeline
 
 import (
+	"castor/stack/environment"
+	computesave "castor/stage/computesave/alfa"
+
+	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awscodebuild"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awscodestarconnections"
 	"github.com/aws/aws-cdk-go/awscdk/v2/pipelines"
@@ -8,10 +12,12 @@ import (
 )
 
 type DeployModelIds struct {
-	StackId          *string
-	CfnConnectionId  *string
-	CodeBuildSynthId *string
-	CodePipelineId   *string
+	StackId                          *string
+	CfnConnectionId                  *string
+	CodeBuildSynthId                 *string
+	CodePipelineId                   *string
+	StackCollection_FIRST_DEPLOY_ID  computesave.StackCollectionIds
+	StackCollection_SECOND_DEPLOY_ID computesave.StackCollectionIds
 }
 
 func (id *DeployModelIds) Stack() *string {
@@ -30,13 +36,28 @@ func (id *DeployModelIds) CodePipeline() *string {
 	return id.CodePipelineId
 }
 
+func (id *DeployModelIds) StackCollection_FIRST_DEPLOY() computesave.StackCollectionIds {
+	return id.StackCollection_FIRST_DEPLOY_ID
+}
+
+func (id *DeployModelIds) StackCollection_SECOND_DEPLOY() computesave.StackCollectionIds {
+	return id.StackCollection_SECOND_DEPLOY_ID
+}
+
 type DeployModelProps struct {
+	StackProps *awscdk.StackProps
 	*awscodestarconnections.CfnConnectionProps
 	ConnectionSourceOptionsProps *pipelines.ConnectionSourceOptions
 	RepositoryProps              *string
 	BranchProps                  *string
 	CodeBuildSynthProps          *pipelines.CodeBuildStepProps
 	*pipelines.CodePipelineProps
+	StackCollection_FIRST_DEPLOY_Props  computesave.StackCollectionProps
+	StackCollection_SECOND_DEPLOY_Props computesave.StackCollectionProps
+}
+
+func (props *DeployModelProps) Stack() *awscdk.StackProps {
+	return props.StackProps
 }
 
 func (props *DeployModelProps) CfnConnection() *awscodestarconnections.CfnConnectionProps {
@@ -75,19 +96,31 @@ func (props *DeployModelProps) AddTemplateToCodePipeline(template pipelines.Code
 	props.CodePipelineProps.Synth = template
 }
 
+func (props *DeployModelProps) StackCollection_FIRST_DEPLOY() computesave.StackCollectionProps {
+	return props.StackCollection_FIRST_DEPLOY_Props
+}
+
+func (props *DeployModelProps) StackCollection_SECOND_DEPLOY() computesave.StackCollectionProps {
+	return props.StackCollection_SECOND_DEPLOY_Props
+}
+
 type DeployModel struct {
 	codepipeline pipelines.CodePipeline
 }
 
 // SETTINGS
 var DeployModelIds_DEFAULT DeployModelIds = DeployModelIds{
-	StackId:          jsii.String("DeployModel-default"),
-	CfnConnectionId:  jsii.String("CodeStarConnectionToGitHub-default"),
-	CodeBuildSynthId: jsii.String("SynthStep-default"),
-	CodePipelineId:   jsii.String("EchoModel-default"),
+	StackId:                          jsii.String("DeployModel-default"),
+	CfnConnectionId:                  jsii.String("CodeStarConnectionToGitHub-default"),
+	CodeBuildSynthId:                 jsii.String("SynthStep-default"),
+	CodePipelineId:                   jsii.String("EchoModel-default"),
+	StackCollection_FIRST_DEPLOY_ID:  &computesave.StackCollectionModelIds_DEFAULT,
+	StackCollection_SECOND_DEPLOY_ID: &computesave.EchoSaveCollectionIds_DEV,
 }
 
 var DeployModelProps_DEFAULT DeployModelProps = DeployModelProps{
+	StackProps: &environment.StackProps_DEFAULT,
+
 	CfnConnectionProps: &awscodestarconnections.CfnConnectionProps{
 		ConnectionName: jsii.String("GithubConnection"),
 		ProviderType:   jsii.String("GitHub"),
@@ -111,4 +144,7 @@ var DeployModelProps_DEFAULT DeployModelProps = DeployModelProps{
 		CrossAccountKeys:  jsii.Bool(true),
 		CodeBuildDefaults: &pipelines.CodeBuildOptions{},
 	},
+
+	StackCollection_FIRST_DEPLOY_Props:  &computesave.StackCollectionModelProps_DEFAULT,
+	StackCollection_SECOND_DEPLOY_Props: &computesave.EchoSaveCollectionProps_DEV,
 }
