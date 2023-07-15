@@ -1,6 +1,7 @@
 package computesave
 
 import (
+	"castor/construct/highlevel/bucket"
 	"castor/construct/pattern/lambdarestapi"
 	"castor/stack/environment"
 	"log"
@@ -15,13 +16,13 @@ import (
 type ApiWriteToBucketProps struct {
 	awscdk.StackProps
 	lambdarestapi.ApiGatewayWithLambdaProxyIntegratedProps
-	awss3.BucketProps
+	bucket.SaveFileProps
 }
 
 type apiWriteToBucket struct {
 	awscdk.Stack
 	writer  lambdarestapi.ApiGatewayWithLambdaProxyIntegrated
-	storage awss3.Bucket
+	storage bucket.SaveFile
 }
 
 type ApiWriteToBucket interface {
@@ -45,11 +46,13 @@ func NewApiWriteToBucket(scope constructs.Construct, id *string, props *ApiWrite
 
 	api := lambdarestapi.NewApiGatewayWithLambdaProxyIntegrated(stack, jsii.String("Writer"), &sprops.ApiGatewayWithLambdaProxyIntegratedProps)
 
-	bk := awss3.NewBucket(stack, jsii.String("Storage"), &sprops.BucketProps)
+	sv := bucket.NewSaveFile(stack, jsii.String("Storage"), &sprops.SaveFileProps)
 
 	fn := api.FunctionWithSqsDestinations().Function()
 
-	bk.GrantWrite(fn.Role(), jsii.String("*"), jsii.Strings("*"))
+	bk := sv.Bucket()
+
+	bk.Bucket().GrantWrite(fn.Role(), jsii.String("*"), jsii.Strings("*"))
 
 	fn.AddEnvironment(
 		jsii.String("STORAGE_SERVICE"),
@@ -64,7 +67,7 @@ func NewApiWriteToBucket(scope constructs.Construct, id *string, props *ApiWrite
 	var component ApiWriteToBucket = &apiWriteToBucket{
 		Stack:   stack,
 		writer:  api,
-		storage: bk,
+		storage: sv,
 	}
 
 	return component

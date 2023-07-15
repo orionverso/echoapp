@@ -10,8 +10,8 @@ import (
 	"github.com/aws/jsii-runtime-go"
 )
 
-// DEVELOPMENT
-func TestSynthSaveEcho_DEV(t *testing.T) {
+// DEFAULT
+func TestSynthSaveBlockData_DEFAULT(t *testing.T) {
 	defer func() {
 		if err := recover(); err != nil {
 			t.Fail()
@@ -30,7 +30,32 @@ func TestSynthSaveEcho_DEV(t *testing.T) {
 
 	stack := awscdk.NewStack(nil, nil, nil)
 
-	NewSaveBlockData(stack, &SaveEchoIds_DEV, &SaveEchoProps_DEV)
+	NewSaveBlockData(stack, jsii.String("TestSynth_DEFAULT"), nil)
+
+	assertions.Template_FromStack(stack, nil)
+}
+
+// DEVELOPMENT
+func TestSynthSaveBlockData_DEV(t *testing.T) {
+	defer func() {
+		if err := recover(); err != nil {
+			t.Fail()
+
+			log.Println("THE COMPONENT IS NOT SYNTHEABLE")
+			fmt.Println("----CHECK CDK ERROR---")
+			fmt.Println(err)
+			fmt.Println("----CHECK CDK ERROR---")
+			// debug.PrintStack() //+info
+		} else {
+			log.Println("THE COMPONENT IS SYNTHEABLE")
+		}
+	}()
+
+	defer jsii.Close()
+
+	stack := awscdk.NewStack(nil, nil, nil)
+
+	NewSaveBlockData(stack, jsii.String("TestSynth_DEV"), &SaveBlockDataProps_DEV)
 
 	assertions.Template_FromStack(stack, &TemplateParsingOption_DEV)
 }
@@ -40,7 +65,7 @@ var TemplateParsingOption_DEV assertions.TemplateParsingOptions = assertions.Tem
 }
 
 // PRODUCTION
-func TestSynthSaveEcho_PROD(t *testing.T) {
+func TestSynthSaveBlockData_PROD(t *testing.T) {
 	defer func() {
 		if err := recover(); err != nil {
 			t.Fail()
@@ -59,7 +84,7 @@ func TestSynthSaveEcho_PROD(t *testing.T) {
 
 	stack := awscdk.NewStack(nil, nil, nil)
 
-	NewSaveBlockData(stack, &SaveEchoIds_PROD, &SaveEchoProps_PROD)
+	NewSaveBlockData(stack, jsii.String("TestSynth_PROD"), &SaveBlockDataProps_PROD)
 
 	assertions.Template_FromStack(stack, &TemplateParsingOption_PROD)
 }

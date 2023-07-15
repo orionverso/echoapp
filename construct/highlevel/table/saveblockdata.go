@@ -1,44 +1,72 @@
 package table
 
 import (
+	"log"
+
+	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsdynamodb"
 	"github.com/aws/constructs-go/constructs/v10"
+	"github.com/aws/jsii-runtime-go"
 )
 
-type SaveBlockDataIds interface {
-	Construct() *string
-	Table() *string
+type SaveBlockDataProps struct {
+	awsdynamodb.TableProps
 }
 
-type SaveBlockDataProps interface {
-	Table() *awsdynamodb.TableProps
-	// connections
+type saveBlockData struct {
+	table awsdynamodb.Table
 }
 
 type SaveBlockData interface {
 	Table() awsdynamodb.Table
 }
 
-func NewSaveBlockData(scope constructs.Construct, id SaveBlockDataIds, props SaveBlockDataProps) SaveBlockData {
-	var sprops SaveBlockDataProps = &SaveBlockModelProps_DEFAULT
-	var sid SaveBlockDataIds = &SaveBlockModelIds_DEFAULT
+func NewSaveBlockData(scope constructs.Construct, id *string, props *SaveBlockDataProps) SaveBlockData {
+	var sprops *SaveBlockDataProps = &SaveBlockDataProps{}
+
+	if id == nil {
+		log.Panicln("parameter id is required, but nil was provided")
+	}
 
 	if props != nil {
 		sprops = props
 	}
 
-	if id != nil {
-		sid = id
-	}
+	this := constructs.NewConstruct(scope, id)
 
-	// this := constructs.NewConstruct(scope, sid.Construct())
-	this := constructs.NewConstruct(scope, sid.Construct())
+	table := awsdynamodb.NewTable(this, jsii.String("Table"), &sprops.TableProps)
 
-	table := awsdynamodb.NewTable(this, sid.Table(), sprops.Table())
-
-	var component SaveBlockData = &SaveBlockModel{
+	var component SaveBlockData = &saveBlockData{
 		table: table,
 	}
 
 	return component
+}
+
+// IMPLEMENTATION
+func (mo *saveBlockData) Table() awsdynamodb.Table {
+	return mo.table
+}
+
+// SETTINGS
+// DEVELOPMENT
+var SaveBlockDataProps_DEV SaveBlockDataProps = SaveBlockDataProps{
+	TableProps: awsdynamodb.TableProps{
+		PartitionKey: &awsdynamodb.Attribute{
+			Name: jsii.String("id"),
+			Type: awsdynamodb.AttributeType_STRING,
+		},
+		RemovalPolicy: awscdk.RemovalPolicy_DESTROY,
+	},
+}
+
+// PRODUCTION
+var SaveBlockDataProps_PROD SaveBlockDataProps = SaveBlockDataProps{
+	TableProps: awsdynamodb.TableProps{
+		PartitionKey: &awsdynamodb.Attribute{
+			Name: jsii.String("id"),
+			Type: awsdynamodb.AttributeType_STRING,
+		},
+		RemovalPolicy: awscdk.RemovalPolicy_DESTROY,
+	},
 }
