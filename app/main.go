@@ -1,7 +1,7 @@
 package main
 
 import (
-	"castor/stack/pipeline"
+	"castor/stack/computesave"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 
@@ -21,7 +21,8 @@ func NewCastorStack(scope constructs.Construct, id string, props *CastorStackPro
 	// }
 	// stack := awscdk.NewStack(scope, &id, &sprops)
 
-	pipeline.NewDeployStack(scope, &pipeline.DeployModelIds_DEFAULT, &pipeline.DeployModelProps_DEFAULT)
+	// pipeline.NewDeployStack(scope, &pipeline.DeployModelIds_DEFAULT, &pipeline.DeployModelProps_DEFAULT)
+	computesave.NewApiWriteToSaveObject(scope, jsii.String("computesave"), &computesave.ApiWriteToSaveObjectProps_DEV)
 
 	// return stack
 }

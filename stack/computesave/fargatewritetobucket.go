@@ -1,36 +1,36 @@
 package computesave
 
 import (
+	"castor/construct/highlevel/bucket"
 	fargate "castor/construct/pattern/applicationloadbalancedfargateservice"
 	"castor/stack/environment"
 	"log"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
-	"github.com/aws/aws-cdk-go/awscdk/v2/awss3"
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
 )
 
-type FargateWriteToBucketProps struct {
+type FargateWriteToSaveObjectProps struct {
 	awscdk.StackProps
 	fargate.FargateEcrImageProps
-	awss3.BucketProps
+	bucket.SaveObjectProps
 }
 
-type fargateWriteToBucket struct {
+type fargateWriteToSaveObject struct {
 	awscdk.Stack
 	writer  fargate.FargateEcrImage
-	storage awss3.Bucket
+	storage bucket.SaveObject
 }
 
-type FargateWriteToBucket interface {
+type FargateWriteToSaveObject interface {
 	awscdk.Stack
 	Fargate() fargate.FargateEcrImage
-	Bucket() awss3.Bucket
+	SaveObject() bucket.SaveObject
 }
 
-func NewFargateWriteToBucket(scope constructs.Construct, id *string, props *FargateWriteToBucketProps) FargateWriteToBucket {
-	var sprops *FargateWriteToBucketProps = &FargateWriteToBucketProps{}
+func NewFargateWriteToSaveObject(scope constructs.Construct, id *string, props *FargateWriteToSaveObjectProps) FargateWriteToSaveObject {
+	var sprops *FargateWriteToSaveObjectProps = &FargateWriteToSaveObjectProps{}
 
 	if id == nil {
 		log.Panicln("parameter id is required, but nil was provided")
@@ -46,7 +46,9 @@ func NewFargateWriteToBucket(scope constructs.Construct, id *string, props *Farg
 
 	fgrole := fg.ApplicationLoadBalancedFargateService().TaskDefinition().TaskRole()
 
-	bk := awss3.NewBucket(stack, jsii.String("Storage"), &sprops.BucketProps)
+	sv := bucket.NewSaveObject(stack, jsii.String("Storage"), &sprops.SaveObjectProps)
+
+	bk := sv.Bucket()
 
 	bk.GrantWrite(fgrole, jsii.String("*"), jsii.Strings("*"))
 
@@ -54,41 +56,35 @@ func NewFargateWriteToBucket(scope constructs.Construct, id *string, props *Farg
 	defaultcontainer.AddEnvironment(jsii.String("STORAGE_SERVICE"), jsii.String("S3"))
 	defaultcontainer.AddEnvironment(jsii.String("DESTINATION"), bk.BucketName())
 
-	var component FargateWriteToBucket = &fargateWriteToBucket{
+	var component FargateWriteToSaveObject = &fargateWriteToSaveObject{
 		Stack:   stack,
 		writer:  fg,
-		storage: bk,
+		storage: sv,
 	}
 
 	return component
 }
 
 // IMPLEMENTATION
-func (mo fargateWriteToBucket) Fargate() fargate.FargateEcrImage {
+func (mo fargateWriteToSaveObject) Fargate() fargate.FargateEcrImage {
 	return mo.writer
 }
 
-func (mo fargateWriteToBucket) Bucket() awss3.Bucket {
+func (mo fargateWriteToSaveObject) SaveObject() bucket.SaveObject {
 	return mo.storage
 }
 
 // SETTINGS
 // DEVELOPMENT
-var FargateWriteToBucketProps_DEV FargateWriteToBucketProps = FargateWriteToBucketProps{
+var FargateWriteToSaveObjectProps_DEV FargateWriteToSaveObjectProps = FargateWriteToSaveObjectProps{
 	StackProps:           environment.StackProps_DEV,
 	FargateEcrImageProps: fargate.FargateEcrImageProps_DEV,
-	BucketProps: awss3.BucketProps{
-		AutoDeleteObjects: jsii.Bool(true),
-		RemovalPolicy:     awscdk.RemovalPolicy_DESTROY,
-	},
+	SaveObjectProps:      bucket.SaveObjectProps_DEV,
 }
 
 // PRODUCTION
-var FargateWriteToBucketProps_PROD FargateWriteToBucketProps = FargateWriteToBucketProps{
+var FargateWriteToSaveObjectProps_PROD FargateWriteToSaveObjectProps = FargateWriteToSaveObjectProps{
 	StackProps:           environment.StackProps_PROD,
 	FargateEcrImageProps: fargate.FargateEcrImageProps_PROD,
-	BucketProps: awss3.BucketProps{
-		AutoDeleteObjects: jsii.Bool(true),
-		RemovalPolicy:     awscdk.RemovalPolicy_DESTROY,
-	},
+	SaveObjectProps:      bucket.SaveObjectProps_PROD,
 }

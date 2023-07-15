@@ -1,37 +1,37 @@
 package computesave
 
 import (
+	"castor/construct/highlevel/table"
 	"castor/construct/pattern/lambdarestapi"
 	"castor/stack/environment"
 	"log"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
-	"github.com/aws/aws-cdk-go/awscdk/v2/awsdynamodb"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
 )
 
-type ApiWriteToTableProps struct {
+type ApiWriteToSaveBlockDataProps struct {
 	awscdk.StackProps
 	lambdarestapi.ApiGatewayWithLambdaProxyIntegratedProps
-	awsdynamodb.TableProps
+	table.SaveBlockDataProps
 }
 
 type apiWriteToTable struct {
 	awscdk.Stack
 	writer  lambdarestapi.ApiGatewayWithLambdaProxyIntegrated
-	storage awsdynamodb.Table
+	storage table.SaveBlockData
 }
 
-type ApiWriteToTable interface {
+type ApiWriteToSaveBlockData interface {
 	awscdk.Stack
 	ApiProxyIntegrated() lambdarestapi.ApiGatewayWithLambdaProxyIntegrated
-	Table() awsdynamodb.Table
+	SaveBlockData() table.SaveBlockData
 }
 
-func NewApiWriteToTable(scope constructs.Construct, id *string, props *ApiWriteToTableProps) ApiWriteToTable {
-	var sprops *ApiWriteToTableProps = &ApiWriteToTableProps{}
+func NewApiWriteToSaveBlockData(scope constructs.Construct, id *string, props *ApiWriteToSaveBlockDataProps) ApiWriteToSaveBlockData {
+	var sprops *ApiWriteToSaveBlockDataProps = &ApiWriteToSaveBlockDataProps{}
 
 	if id == nil {
 		log.Panicln("parameter id is required, but nil was provided")
@@ -45,7 +45,9 @@ func NewApiWriteToTable(scope constructs.Construct, id *string, props *ApiWriteT
 
 	api := lambdarestapi.NewApiGatewayWithLambdaProxyIntegrated(stack, jsii.String("Writer"), &sprops.ApiGatewayWithLambdaProxyIntegratedProps)
 
-	tb := awsdynamodb.NewTable(stack, jsii.String("Storage"), &sprops.TableProps)
+	sv := table.NewSaveBlockData(stack, jsii.String("Storage"), &sprops.SaveBlockDataProps)
+
+	tb := sv.Table()
 
 	fn := api.FunctionWithSqsDestinations().Function()
 
@@ -61,10 +63,10 @@ func NewApiWriteToTable(scope constructs.Construct, id *string, props *ApiWriteT
 		tb.TableName(),
 		&awslambda.EnvironmentOptions{})
 
-	var component ApiWriteToTable = &apiWriteToTable{
+	var component ApiWriteToSaveBlockData = &apiWriteToTable{
 		Stack:   stack,
 		writer:  api,
-		storage: tb,
+		storage: sv,
 	}
 
 	return component
@@ -75,33 +77,21 @@ func (mo *apiWriteToTable) ApiProxyIntegrated() lambdarestapi.ApiGatewayWithLamb
 	return mo.writer
 }
 
-func (mo *apiWriteToTable) Table() awsdynamodb.Table {
+func (mo *apiWriteToTable) SaveBlockData() table.SaveBlockData {
 	return mo.storage
 }
 
 // SETTINGS
 // DEVELOPMENT
-var ApiWriteToTableProps_DEV ApiWriteToTableProps = ApiWriteToTableProps{
+var ApiWriteToSaveBlockDataProps_DEV ApiWriteToSaveBlockDataProps = ApiWriteToSaveBlockDataProps{
 	StackProps:                               environment.StackProps_DEV,
 	ApiGatewayWithLambdaProxyIntegratedProps: lambdarestapi.ApiGatewayWithLambdaProxyIntegratedProps_DEV,
-	TableProps: awsdynamodb.TableProps{
-		PartitionKey: &awsdynamodb.Attribute{
-			Name: jsii.String("id"),
-			Type: awsdynamodb.AttributeType_STRING,
-		},
-		RemovalPolicy: awscdk.RemovalPolicy_DESTROY,
-	},
+	SaveBlockDataProps:                       table.SaveBlockDataProps_DEV,
 }
 
 // PRODUCTION
-var ApiWriteToTableProps_PROD ApiWriteToTableProps = ApiWriteToTableProps{
+var ApiWriteToSaveBlockDataProps_PROD ApiWriteToSaveBlockDataProps = ApiWriteToSaveBlockDataProps{
 	StackProps:                               environment.StackProps_PROD,
 	ApiGatewayWithLambdaProxyIntegratedProps: lambdarestapi.ApiGatewayWithLambdaProxyIntegratedProps_PROD,
-	TableProps: awsdynamodb.TableProps{
-		PartitionKey: &awsdynamodb.Attribute{
-			Name: jsii.String("id"),
-			Type: awsdynamodb.AttributeType_STRING,
-		},
-		RemovalPolicy: awscdk.RemovalPolicy_DESTROY,
-	},
+	SaveBlockDataProps:                       table.SaveBlockDataProps_PROD,
 }

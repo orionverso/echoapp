@@ -8,31 +8,30 @@ import (
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
-	"github.com/aws/aws-cdk-go/awscdk/v2/awss3"
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
 )
 
-type ApiWriteToBucketProps struct {
+type ApiWriteToSaveObjectProps struct {
 	awscdk.StackProps
 	lambdarestapi.ApiGatewayWithLambdaProxyIntegratedProps
-	bucket.SaveFileProps
+	bucket.SaveObjectProps
 }
 
-type apiWriteToBucket struct {
+type apiWriteToSaveObject struct {
 	awscdk.Stack
 	writer  lambdarestapi.ApiGatewayWithLambdaProxyIntegrated
-	storage bucket.SaveFile
+	storage bucket.SaveObject
 }
 
-type ApiWriteToBucket interface {
+type ApiWriteToSaveObject interface {
 	awscdk.Stack
 	ApiProxyIntegrated() lambdarestapi.ApiGatewayWithLambdaProxyIntegrated
-	Bucket() awss3.Bucket
+	SaveObject() bucket.SaveObject
 }
 
-func NewApiWriteToBucket(scope constructs.Construct, id *string, props *ApiWriteToBucketProps) ApiWriteToBucket {
-	var sprops *ApiWriteToBucketProps = &ApiWriteToBucketProps{}
+func NewApiWriteToSaveObject(scope constructs.Construct, id *string, props *ApiWriteToSaveObjectProps) ApiWriteToSaveObject {
+	var sprops *ApiWriteToSaveObjectProps = &ApiWriteToSaveObjectProps{}
 
 	if id == nil {
 		log.Panicln("parameter id is required, but nil was provided")
@@ -46,13 +45,13 @@ func NewApiWriteToBucket(scope constructs.Construct, id *string, props *ApiWrite
 
 	api := lambdarestapi.NewApiGatewayWithLambdaProxyIntegrated(stack, jsii.String("Writer"), &sprops.ApiGatewayWithLambdaProxyIntegratedProps)
 
-	sv := bucket.NewSaveFile(stack, jsii.String("Storage"), &sprops.SaveFileProps)
+	sv := bucket.NewSaveObject(stack, jsii.String("Storage"), &sprops.SaveObjectProps)
 
 	fn := api.FunctionWithSqsDestinations().Function()
 
 	bk := sv.Bucket()
 
-	bk.Bucket().GrantWrite(fn.Role(), jsii.String("*"), jsii.Strings("*"))
+	bk.GrantWrite(fn.Role(), jsii.String("*"), jsii.Strings("*"))
 
 	fn.AddEnvironment(
 		jsii.String("STORAGE_SERVICE"),
@@ -64,7 +63,7 @@ func NewApiWriteToBucket(scope constructs.Construct, id *string, props *ApiWrite
 		bk.BucketName(),
 		&awslambda.EnvironmentOptions{})
 
-	var component ApiWriteToBucket = &apiWriteToBucket{
+	var component ApiWriteToSaveObject = &apiWriteToSaveObject{
 		Stack:   stack,
 		writer:  api,
 		storage: sv,
@@ -74,31 +73,25 @@ func NewApiWriteToBucket(scope constructs.Construct, id *string, props *ApiWrite
 }
 
 // IMPLEMENTATION
-func (mo *apiWriteToBucket) ApiProxyIntegrated() lambdarestapi.ApiGatewayWithLambdaProxyIntegrated {
+func (mo *apiWriteToSaveObject) ApiProxyIntegrated() lambdarestapi.ApiGatewayWithLambdaProxyIntegrated {
 	return mo.writer
 }
 
-func (mo *apiWriteToBucket) Bucket() awss3.Bucket {
+func (mo *apiWriteToSaveObject) SaveObject() bucket.SaveObject {
 	return mo.storage
 }
 
 // SETTINGS
 // DEVELOPMENT
-var ApiWriteToBucketProps_DEV ApiWriteToBucketProps = ApiWriteToBucketProps{
+var ApiWriteToSaveObjectProps_DEV ApiWriteToSaveObjectProps = ApiWriteToSaveObjectProps{
 	StackProps:                               environment.StackProps_DEV,
 	ApiGatewayWithLambdaProxyIntegratedProps: lambdarestapi.ApiGatewayWithLambdaProxyIntegratedProps_DEV,
-	BucketProps: awss3.BucketProps{
-		AutoDeleteObjects: jsii.Bool(true),
-		RemovalPolicy:     awscdk.RemovalPolicy_DESTROY,
-	},
+	SaveObjectProps:                          bucket.SaveObjectProps_DEV,
 }
 
 // PRODUCTION
-var ApiWriteToBucketProps_PROD ApiWriteToBucketProps = ApiWriteToBucketProps{
+var ApiWriteToSaveObjectProps_PROD ApiWriteToSaveObjectProps = ApiWriteToSaveObjectProps{
 	StackProps:                               environment.StackProps_PROD,
 	ApiGatewayWithLambdaProxyIntegratedProps: lambdarestapi.ApiGatewayWithLambdaProxyIntegratedProps_PROD,
-	BucketProps: awss3.BucketProps{
-		AutoDeleteObjects: jsii.Bool(true),
-		RemovalPolicy:     awscdk.RemovalPolicy_DESTROY,
-	},
+	SaveObjectProps:                          bucket.SaveObjectProps_PROD,
 }

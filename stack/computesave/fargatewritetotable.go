@@ -1,36 +1,36 @@
 package computesave
 
 import (
+	"castor/construct/highlevel/table"
 	fargate "castor/construct/pattern/applicationloadbalancedfargateservice"
 	"castor/stack/environment"
 	"log"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
-	"github.com/aws/aws-cdk-go/awscdk/v2/awsdynamodb"
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
 )
 
-type FargateWriteToTableProps struct {
+type FargateWriteToSaveBlockDataProps struct {
 	awscdk.StackProps
 	fargate.FargateEcrImageProps
-	awsdynamodb.TableProps
+	table.SaveBlockDataProps
 }
 
 type fargateWriteToTable struct {
 	awscdk.Stack
 	writer  fargate.FargateEcrImage
-	storage awsdynamodb.Table
+	storage table.SaveBlockData
 }
 
-type FargateWriteToTable interface {
+type FargateWriteToSaveBlockData interface {
 	awscdk.Stack
 	Fargate() fargate.FargateEcrImage
-	Table() awsdynamodb.Table
+	SaveBlockData() table.SaveBlockData
 }
 
-func NewFargateWriteToTable(scope constructs.Construct, id *string, props *FargateWriteToTableProps) FargateWriteToTable {
-	var sprops *FargateWriteToTableProps = &FargateWriteToTableProps{}
+func NewFargateWriteToSaveBlockData(scope constructs.Construct, id *string, props *FargateWriteToSaveBlockDataProps) FargateWriteToSaveBlockData {
+	var sprops *FargateWriteToSaveBlockDataProps = &FargateWriteToSaveBlockDataProps{}
 
 	if id == nil {
 		log.Panicln("parameter id is required, but nil was provided")
@@ -46,7 +46,9 @@ func NewFargateWriteToTable(scope constructs.Construct, id *string, props *Farga
 
 	fgrole := fg.ApplicationLoadBalancedFargateService().TaskDefinition().TaskRole()
 
-	tb := awsdynamodb.NewTable(stack, jsii.String("Storage"), &sprops.TableProps)
+	sv := table.NewSaveBlockData(stack, jsii.String("Storage"), &sprops.SaveBlockDataProps)
+
+	tb := sv.Table()
 
 	tb.GrantWriteData(fgrole)
 
@@ -54,10 +56,10 @@ func NewFargateWriteToTable(scope constructs.Construct, id *string, props *Farga
 	defaultcontainer.AddEnvironment(jsii.String("STORAGE_SERVICE"), jsii.String("DYNAMODB"))
 	defaultcontainer.AddEnvironment(jsii.String("DESTINATION"), tb.TableName())
 
-	var component FargateWriteToTable = &fargateWriteToTable{
+	var component FargateWriteToSaveBlockData = &fargateWriteToTable{
 		Stack:   stack,
 		writer:  fg,
-		storage: tb,
+		storage: sv,
 	}
 
 	return component
@@ -68,33 +70,21 @@ func (mo fargateWriteToTable) Fargate() fargate.FargateEcrImage {
 	return mo.writer
 }
 
-func (mo fargateWriteToTable) Table() awsdynamodb.Table {
+func (mo fargateWriteToTable) SaveBlockData() table.SaveBlockData {
 	return mo.storage
 }
 
 // SETTINGS
 // DEVELOPMENT
-var FargateWriteToTableProps_DEV FargateWriteToTableProps = FargateWriteToTableProps{
+var FargateWriteToSaveBlockDataProps_DEV FargateWriteToSaveBlockDataProps = FargateWriteToSaveBlockDataProps{
 	StackProps:           environment.StackProps_DEV,
 	FargateEcrImageProps: fargate.FargateEcrImageProps_DEV,
-	TableProps: awsdynamodb.TableProps{
-		PartitionKey: &awsdynamodb.Attribute{
-			Name: jsii.String("id"),
-			Type: awsdynamodb.AttributeType_STRING,
-		},
-		RemovalPolicy: awscdk.RemovalPolicy_DESTROY,
-	},
+	SaveBlockDataProps:   table.SaveBlockDataProps_DEV,
 }
 
 // PRODUCTION
-var FargateWriteToTableProps_PROD FargateWriteToTableProps = FargateWriteToTableProps{
+var FargateWriteToSaveBlockDataProps_PROD FargateWriteToSaveBlockDataProps = FargateWriteToSaveBlockDataProps{
 	StackProps:           environment.StackProps_PROD,
 	FargateEcrImageProps: fargate.FargateEcrImageProps_PROD,
-	TableProps: awsdynamodb.TableProps{
-		PartitionKey: &awsdynamodb.Attribute{
-			Name: jsii.String("id"),
-			Type: awsdynamodb.AttributeType_STRING,
-		},
-		RemovalPolicy: awscdk.RemovalPolicy_DESTROY,
-	},
+	SaveBlockDataProps:   table.SaveBlockDataProps_PROD,
 }
