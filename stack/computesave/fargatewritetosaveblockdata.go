@@ -1,9 +1,11 @@
 package computesave
 
 import (
+	"castor/construct/highlevel/repository"
 	"castor/construct/highlevel/table"
 	fargate "castor/construct/pattern/applicationloadbalancedfargateservice"
 	"castor/stack/environment"
+	"fmt"
 	"log"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
@@ -13,20 +15,23 @@ import (
 
 type FargateWriteToSaveBlockDataProps struct {
 	awscdk.StackProps
-	fargate.FargateEcrImageProps
+	fargate.FargateProps
 	table.SaveBlockDataProps
+	repository.EcrRepoProps
 }
 
-type fargateWriteToTable struct {
+type fargateWriteToSaveBlockData struct {
 	awscdk.Stack
-	writer  fargate.FargateEcrImage
-	storage table.SaveBlockData
+	writer     fargate.Fargate
+	storage    table.SaveBlockData
+	repository repository.EcrRepo
 }
 
 type FargateWriteToSaveBlockData interface {
 	awscdk.Stack
-	Fargate() fargate.FargateEcrImage
+	Fargate() fargate.Fargate
 	SaveBlockData() table.SaveBlockData
+	EcrRepo() repository.EcrRepo
 }
 
 func NewFargateWriteToSaveBlockData(scope constructs.Construct, id *string, props *FargateWriteToSaveBlockDataProps) FargateWriteToSaveBlockData {
@@ -40,13 +45,19 @@ func NewFargateWriteToSaveBlockData(scope constructs.Construct, id *string, prop
 		sprops = props
 	}
 
-	stack := awscdk.NewStack(scope, id, &sprops.StackProps)
+	stackful := awscdk.NewStack(scope, jsii.String(fmt.Sprint(*id, "-stateful")), &sprops.StackProps)
 
-	fg := fargate.NewFargateEcrImage(stack, jsii.String("Writer"), &sprops.FargateEcrImageProps)
+	repo := repository.NewEcrRepo(stackful, jsii.String("EcrRepository"), &sprops.EcrRepoProps)
+
+	stackless := awscdk.NewStack(scope, id, &sprops.StackProps)
+
+	sprops.AddContainerImageToApplicationLoadBalancedFargate(repo.Image())
+
+	fg := fargate.NewFargate(stackless, jsii.String("Writer"), &sprops.FargateProps)
 
 	fgrole := fg.ApplicationLoadBalancedFargateService().TaskDefinition().TaskRole()
 
-	sv := table.NewSaveBlockData(stack, jsii.String("Storage"), &sprops.SaveBlockDataProps)
+	sv := table.NewSaveBlockData(stackless, jsii.String("Storage"), &sprops.SaveBlockDataProps)
 
 	tb := sv.Table()
 
@@ -56,8 +67,8 @@ func NewFargateWriteToSaveBlockData(scope constructs.Construct, id *string, prop
 	defaultcontainer.AddEnvironment(jsii.String("STORAGE_SERVICE"), jsii.String("DYNAMODB"))
 	defaultcontainer.AddEnvironment(jsii.String("DESTINATION"), tb.TableName())
 
-	var component FargateWriteToSaveBlockData = &fargateWriteToTable{
-		Stack:   stack,
+	var component FargateWriteToSaveBlockData = &fargateWriteToSaveBlockData{
+		Stack:   stackless,
 		writer:  fg,
 		storage: sv,
 	}
@@ -66,25 +77,31 @@ func NewFargateWriteToSaveBlockData(scope constructs.Construct, id *string, prop
 }
 
 // IMPLEMENTATION
-func (mo fargateWriteToTable) Fargate() fargate.FargateEcrImage {
+func (mo *fargateWriteToSaveBlockData) Fargate() fargate.Fargate {
 	return mo.writer
 }
 
-func (mo fargateWriteToTable) SaveBlockData() table.SaveBlockData {
+func (mo *fargateWriteToSaveBlockData) SaveBlockData() table.SaveBlockData {
 	return mo.storage
+}
+
+func (mo *fargateWriteToSaveBlockData) EcrRepo() repository.EcrRepo {
+	return mo.repository
 }
 
 // SETTINGS
 // DEVELOPMENT
 var FargateWriteToSaveBlockDataProps_DEV FargateWriteToSaveBlockDataProps = FargateWriteToSaveBlockDataProps{
-	StackProps:           environment.StackProps_DEV,
-	FargateEcrImageProps: fargate.FargateEcrImageProps_DEV,
-	SaveBlockDataProps:   table.SaveBlockDataProps_DEV,
+	StackProps:         environment.StackProps_DEV,
+	FargateProps:       fargate.FargateProps_DEV,
+	SaveBlockDataProps: table.SaveBlockDataProps_DEV,
+	EcrRepoProps:       repository.EcrRepoProps_DEV,
 }
 
 // PRODUCTION
 var FargateWriteToSaveBlockDataProps_PROD FargateWriteToSaveBlockDataProps = FargateWriteToSaveBlockDataProps{
-	StackProps:           environment.StackProps_PROD,
-	FargateEcrImageProps: fargate.FargateEcrImageProps_PROD,
-	SaveBlockDataProps:   table.SaveBlockDataProps_PROD,
+	StackProps:         environment.StackProps_PROD,
+	FargateProps:       fargate.FargateProps_PROD,
+	SaveBlockDataProps: table.SaveBlockDataProps_PROD,
+	EcrRepoProps:       repository.EcrRepoProps_PROD,
 }

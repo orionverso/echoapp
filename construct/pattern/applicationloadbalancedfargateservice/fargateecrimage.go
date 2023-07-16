@@ -3,33 +3,28 @@ package applicationloadbalancedfargateservice
 import (
 	"log"
 
-	"github.com/aws/aws-cdk-go/awscdk/v2/awsecr"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsecs"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsecspatterns"
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
 )
 
-type FargateEcrImageProps struct {
+type FargateProps struct {
 	awsecspatterns.ApplicationLoadBalancedFargateServiceProps
-	awsecr.RepositoryProps
-	TagImage string
 }
 
 type fargateEcrImage struct {
 	constructs.Construct
 	applicationloadbalancedfargateservice awsecspatterns.ApplicationLoadBalancedFargateService
-	repository                            awsecr.Repository
 }
 
-type FargateEcrImage interface {
+type Fargate interface {
 	constructs.Construct
 	ApplicationLoadBalancedFargateService() awsecspatterns.ApplicationLoadBalancedFargateService
-	Repository() awsecr.Repository
 }
 
-func NewFargateEcrImage(scope constructs.Construct, id *string, props *FargateEcrImageProps) FargateEcrImage {
-	var sprops *FargateEcrImageProps = &FargateEcrImageProps{}
+func NewFargate(scope constructs.Construct, id *string, props *FargateProps) Fargate {
+	var sprops *FargateProps = &FargateProps{}
 
 	if id == nil {
 		log.Panicln("parameter id is required, but nil was provided")
@@ -41,25 +36,18 @@ func NewFargateEcrImage(scope constructs.Construct, id *string, props *FargateEc
 
 	this := constructs.NewConstruct(scope, id)
 
-	repo := awsecr.NewRepository(this, jsii.String("Repository"), &sprops.RepositoryProps)
-
-	image := awsecs.AssetImage_FromEcrRepository(repo, jsii.String(sprops.TagImage))
-
-	sprops.AddContainerImageToApplicationLoadBalancedFargate(image)
-
 	fargate := awsecspatterns.NewApplicationLoadBalancedFargateService(this, jsii.String("ApplicationLoadBalancedFargateService"),
 		&sprops.ApplicationLoadBalancedFargateServiceProps)
 
-	var component FargateEcrImage = &fargateEcrImage{
+	var component Fargate = &fargateEcrImage{
 		Construct:                             this,
 		applicationloadbalancedfargateservice: fargate,
-		repository:                            repo,
 	}
 	return component
 }
 
 // PROPS
-func (props *FargateEcrImageProps) AddContainerImageToApplicationLoadBalancedFargate(image awsecs.ContainerImage) {
+func (props *FargateProps) AddContainerImageToApplicationLoadBalancedFargate(image awsecs.ContainerImage) {
 	var taskImageOptions awsecspatterns.ApplicationLoadBalancedTaskImageOptions
 	taskImageOptions.Image = image
 	props.ApplicationLoadBalancedFargateServiceProps.TaskImageOptions = &taskImageOptions
@@ -70,31 +58,23 @@ func (fa *fargateEcrImage) ApplicationLoadBalancedFargateService() awsecspattern
 	return fa.applicationloadbalancedfargateservice
 }
 
-func (fa *fargateEcrImage) Repository() awsecr.Repository {
-	return fa.repository
-}
-
 // SETTINGS
 // DEVELOPMENT
-var FargateEcrImageProps_DEV FargateEcrImageProps = FargateEcrImageProps{
+var FargateProps_DEV FargateProps = FargateProps{
 	ApplicationLoadBalancedFargateServiceProps: awsecspatterns.ApplicationLoadBalancedFargateServiceProps{
 		MemoryLimitMiB:   jsii.Number(1024),
 		DesiredCount:     jsii.Number(1),
 		Cpu:              jsii.Number(512),
 		LoadBalancerName: jsii.String("echoapp-alb-dev"),
 	},
-	RepositoryProps: awsecr.RepositoryProps{},
-	TagImage:        "latest",
 }
 
 // PRODUCTION
-var FargateEcrImageProps_PROD FargateEcrImageProps = FargateEcrImageProps{
+var FargateProps_PROD FargateProps = FargateProps{
 	ApplicationLoadBalancedFargateServiceProps: awsecspatterns.ApplicationLoadBalancedFargateServiceProps{
 		MemoryLimitMiB:   jsii.Number(1024),
 		DesiredCount:     jsii.Number(1),
 		Cpu:              jsii.Number(512),
 		LoadBalancerName: jsii.String("echoapp-alb-prod"),
 	},
-	RepositoryProps: awsecr.RepositoryProps{},
-	TagImage:        "latest",
 }

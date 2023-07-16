@@ -11,7 +11,7 @@ import (
 )
 
 // DEFAULT
-func TestSynthFargateEcrImage_DEFAULT(t *testing.T) {
+func TestSynthFargate_DEFAULT(t *testing.T) {
 	defer func() {
 		if err := recover(); err != nil {
 			t.Fail()
@@ -30,13 +30,13 @@ func TestSynthFargateEcrImage_DEFAULT(t *testing.T) {
 
 	stack := awscdk.NewStack(nil, nil, nil)
 
-	NewFargateEcrImage(stack, jsii.String("TestSynth_DEFAULT"), nil)
+	NewFargate(stack, jsii.String("TestSynth_DEFAULT"), nil)
 
 	assertions.Template_FromStack(stack, nil)
 }
 
 // DEVELOPMENT
-func TestSynthFargateEcrImage_DEV(t *testing.T) {
+func TestSynthFargate_DEV(t *testing.T) {
 	defer func() {
 		if err := recover(); err != nil {
 			t.Fail()
@@ -55,7 +55,7 @@ func TestSynthFargateEcrImage_DEV(t *testing.T) {
 
 	stack := awscdk.NewStack(nil, nil, nil)
 
-	NewFargateEcrImage(stack, jsii.String("TestSynth_DEV"), &FargateEcrImageProps_DEV)
+	NewFargate(stack, jsii.String("TestSynth_DEV"), &FargateProps_DEV)
 
 	assertions.Template_FromStack(stack, &TemplateParsingOption_DEV)
 }
@@ -65,7 +65,7 @@ var TemplateParsingOption_DEV assertions.TemplateParsingOptions = assertions.Tem
 }
 
 // PRODUCTION
-func TestSynthFargateEcrImage_PROD(t *testing.T) {
+func TestSynthFargate_PROD(t *testing.T) {
 	defer func() {
 		if err := recover(); err != nil {
 			t.Fail()
@@ -84,7 +84,7 @@ func TestSynthFargateEcrImage_PROD(t *testing.T) {
 
 	stack := awscdk.NewStack(nil, nil, nil)
 
-	NewFargateEcrImage(stack, jsii.String("TestSynth_PROD"), &FargateEcrImageProps_PROD)
+	NewFargate(stack, jsii.String("TestSynth_PROD"), &FargateProps_PROD)
 
 	assertions.Template_FromStack(stack, &TemplateParsingOption_PROD)
 }

@@ -2,8 +2,10 @@ package computesave
 
 import (
 	"castor/construct/highlevel/bucket"
+	"castor/construct/highlevel/repository"
 	fargate "castor/construct/pattern/applicationloadbalancedfargateservice"
 	"castor/stack/environment"
+	"fmt"
 	"log"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
@@ -13,20 +15,23 @@ import (
 
 type FargateWriteToSaveObjectProps struct {
 	awscdk.StackProps
-	fargate.FargateEcrImageProps
+	fargate.FargateProps
 	bucket.SaveObjectProps
+	repository.EcrRepoProps
 }
 
 type fargateWriteToSaveObject struct {
 	awscdk.Stack
-	writer  fargate.FargateEcrImage
-	storage bucket.SaveObject
+	writer     fargate.Fargate
+	storage    bucket.SaveObject
+	repository repository.EcrRepo
 }
 
 type FargateWriteToSaveObject interface {
 	awscdk.Stack
-	Fargate() fargate.FargateEcrImage
+	Fargate() fargate.Fargate
 	SaveObject() bucket.SaveObject
+	EcrRepo() repository.EcrRepo
 }
 
 func NewFargateWriteToSaveObject(scope constructs.Construct, id *string, props *FargateWriteToSaveObjectProps) FargateWriteToSaveObject {
@@ -40,13 +45,19 @@ func NewFargateWriteToSaveObject(scope constructs.Construct, id *string, props *
 		sprops = props
 	}
 
-	stack := awscdk.NewStack(scope, id, &sprops.StackProps)
+	stackful := awscdk.NewStack(scope, jsii.String(fmt.Sprint(*id, "-stateful")), &sprops.StackProps)
 
-	fg := fargate.NewFargateEcrImage(stack, jsii.String("Writer"), &sprops.FargateEcrImageProps)
+	repo := repository.NewEcrRepo(stackful, jsii.String("EcrRepository"), &sprops.EcrRepoProps)
+
+	stackless := awscdk.NewStack(scope, id, &sprops.StackProps)
+
+	sprops.AddContainerImageToApplicationLoadBalancedFargate(repo.Image())
+
+	fg := fargate.NewFargate(stackless, jsii.String("Writer"), &sprops.FargateProps)
 
 	fgrole := fg.ApplicationLoadBalancedFargateService().TaskDefinition().TaskRole()
 
-	sv := bucket.NewSaveObject(stack, jsii.String("Storage"), &sprops.SaveObjectProps)
+	sv := bucket.NewSaveObject(stackless, jsii.String("Storage"), &sprops.SaveObjectProps)
 
 	bk := sv.Bucket()
 
@@ -57,7 +68,7 @@ func NewFargateWriteToSaveObject(scope constructs.Construct, id *string, props *
 	defaultcontainer.AddEnvironment(jsii.String("DESTINATION"), bk.BucketName())
 
 	var component FargateWriteToSaveObject = &fargateWriteToSaveObject{
-		Stack:   stack,
+		Stack:   stackless,
 		writer:  fg,
 		storage: sv,
 	}
@@ -66,25 +77,31 @@ func NewFargateWriteToSaveObject(scope constructs.Construct, id *string, props *
 }
 
 // IMPLEMENTATION
-func (mo fargateWriteToSaveObject) Fargate() fargate.FargateEcrImage {
+func (mo *fargateWriteToSaveObject) Fargate() fargate.Fargate {
 	return mo.writer
 }
 
-func (mo fargateWriteToSaveObject) SaveObject() bucket.SaveObject {
+func (mo *fargateWriteToSaveObject) SaveObject() bucket.SaveObject {
 	return mo.storage
+}
+
+func (mo *fargateWriteToSaveObject) EcrRepo() repository.EcrRepo {
+	return mo.repository
 }
 
 // SETTINGS
 // DEVELOPMENT
 var FargateWriteToSaveObjectProps_DEV FargateWriteToSaveObjectProps = FargateWriteToSaveObjectProps{
-	StackProps:           environment.StackProps_DEV,
-	FargateEcrImageProps: fargate.FargateEcrImageProps_DEV,
-	SaveObjectProps:      bucket.SaveObjectProps_DEV,
+	StackProps:      environment.StackProps_DEV,
+	FargateProps:    fargate.FargateProps_DEV,
+	SaveObjectProps: bucket.SaveObjectProps_DEV,
+	EcrRepoProps:    repository.EcrRepoProps_DEV,
 }
 
 // PRODUCTION
 var FargateWriteToSaveObjectProps_PROD FargateWriteToSaveObjectProps = FargateWriteToSaveObjectProps{
-	StackProps:           environment.StackProps_PROD,
-	FargateEcrImageProps: fargate.FargateEcrImageProps_PROD,
-	SaveObjectProps:      bucket.SaveObjectProps_PROD,
+	StackProps:      environment.StackProps_PROD,
+	FargateProps:    fargate.FargateProps_PROD,
+	SaveObjectProps: bucket.SaveObjectProps_PROD,
+	EcrRepoProps:    repository.EcrRepoProps_PROD,
 }
