@@ -11,7 +11,7 @@ import (
 )
 
 // DEFAULT
-func TestSynthFargateWriteToBucket_DEFAULT(t *testing.T) {
+func TestSynthFargateWriteToSaveBlockData_DEFAULT(t *testing.T) {
 	defer func() {
 		if err := recover(); err != nil {
 			t.Fail()
@@ -30,13 +30,13 @@ func TestSynthFargateWriteToBucket_DEFAULT(t *testing.T) {
 
 	stack := awscdk.NewStack(nil, nil, nil)
 
-	NewFargateWriteToBucket(stack, jsii.String("TestSynth_DEFAULT"), nil)
+	NewFargateWriteToSaveBlockData(stack, jsii.String("TestSynth_DEFAULT"), nil)
 
 	assertions.Template_FromStack(stack, nil)
 }
 
 // DEVELOPMENT
-func TestSynthFargateWriteToBucket_DEV(t *testing.T) {
+func TestSynthFargateWriteToSaveBlockData_DEV(t *testing.T) {
 	defer func() {
 		if err := recover(); err != nil {
 			t.Fail()
@@ -55,17 +55,13 @@ func TestSynthFargateWriteToBucket_DEV(t *testing.T) {
 
 	stack := awscdk.NewStack(nil, nil, nil)
 
-	NewFargateWriteToBucket(stack, jsii.String("TestSynth_DEV"), &FargateWriteToBucketProps_DEV)
+	NewFargateWriteToSaveBlockData(stack, jsii.String("TestSynth_DEV"), &FargateWriteToSaveBlockDataProps_DEV)
 
 	assertions.Template_FromStack(stack, &TemplateParsingOption_DEV)
 }
 
-var TemplateParsingOption_DEV assertions.TemplateParsingOptions = assertions.TemplateParsingOptions{
-	SkipCyclicalDependenciesCheck: jsii.Bool(false),
-}
-
 // PRODUCTION
-func TestSynthFargateWriteToBucket_PROD(t *testing.T) {
+func TestSynthFargateWriteToSaveBlockData_PROD(t *testing.T) {
 	defer func() {
 		if err := recover(); err != nil {
 			t.Fail()
@@ -84,11 +80,7 @@ func TestSynthFargateWriteToBucket_PROD(t *testing.T) {
 
 	stack := awscdk.NewStack(nil, nil, nil)
 
-	NewFargateWriteToBucket(stack, jsii.String("TestSynth_PROD"), &FargateWriteToBucketProps_PROD)
+	NewFargateWriteToSaveBlockData(stack, jsii.String("TestSynth_PROD"), &FargateWriteToSaveBlockDataProps_PROD)
 
 	assertions.Template_FromStack(stack, &TemplateParsingOption_PROD)
-}
-
-var TemplateParsingOption_PROD assertions.TemplateParsingOptions = assertions.TemplateParsingOptions{
-	SkipCyclicalDependenciesCheck: jsii.Bool(false),
 }

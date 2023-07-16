@@ -11,7 +11,7 @@ import (
 )
 
 // DEFAULT
-func TestSynthApiWriteToTable_DEFAULT(t *testing.T) {
+func TestSynthApiWriteToSaveBlockData_DEFAULT(t *testing.T) {
 	defer func() {
 		if err := recover(); err != nil {
 			t.Fail()
@@ -30,13 +30,13 @@ func TestSynthApiWriteToTable_DEFAULT(t *testing.T) {
 
 	stack := awscdk.NewStack(nil, nil, nil)
 
-	NewApiWriteToTable(stack, jsii.String("TestSynth_DEFAULT"), nil)
+	NewApiWriteToSaveBlockData(stack, jsii.String("TestSynth_DEFAULT"), nil)
 
 	assertions.Template_FromStack(stack, nil)
 }
 
 // DEVELOPMENT
-func TestSynthApiWriteToTable_DEV(t *testing.T) {
+func TestSynthApiWriteToSaveBlockData_DEV(t *testing.T) {
 	defer func() {
 		if err := recover(); err != nil {
 			t.Fail()
@@ -55,7 +55,7 @@ func TestSynthApiWriteToTable_DEV(t *testing.T) {
 
 	stack := awscdk.NewStack(nil, nil, nil)
 
-	NewApiWriteToTable(stack, jsii.String("TestSynth_DEV"), &ApiWriteToTableProps_DEV)
+	NewApiWriteToSaveBlockData(stack, jsii.String("TestSynth_DEV"), &ApiWriteToSaveBlockDataProps_DEV)
 
 	assertions.Template_FromStack(stack, &TemplateParsingOption_DEV)
 }
@@ -65,7 +65,7 @@ var TemplateParsingOption_DEV assertions.TemplateParsingOptions = assertions.Tem
 }
 
 // PRODUCTION
-func TestSynthApiWriteToTable_PROD(t *testing.T) {
+func TestSynthApiWriteToSaveBlockData_PROD(t *testing.T) {
 	defer func() {
 		if err := recover(); err != nil {
 			t.Fail()
@@ -84,7 +84,7 @@ func TestSynthApiWriteToTable_PROD(t *testing.T) {
 
 	stack := awscdk.NewStack(nil, nil, nil)
 
-	NewApiWriteToTable(stack, jsii.String("TestSynth_PROD"), &ApiWriteToTableProps_PROD)
+	NewApiWriteToSaveBlockData(stack, jsii.String("TestSynth_PROD"), &ApiWriteToSaveBlockDataProps_PROD)
 
 	assertions.Template_FromStack(stack, &TemplateParsingOption_PROD)
 }

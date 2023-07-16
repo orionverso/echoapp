@@ -16,9 +16,10 @@ import (
 
 type FunctionWithSqsDestinationsProps struct {
 	awslambda.FunctionProps
-	SuccessQueueProps                    awssqs.QueueProps
-	FailureQueueProps                    awssqs.QueueProps
-	AllowReceiveMessageFromFunctionProps awsiam.PolicyStatementProps
+	SuccessQueueProps                awssqs.QueueProps
+	FailureQueueProps                awssqs.QueueProps
+	SuccessQueuePolicyStatementProps awsiam.PolicyStatementProps
+	FailureQueuePolicyStatementProps awsiam.PolicyStatementProps
 }
 
 type functionWithSqsDestinations struct {
@@ -54,8 +55,8 @@ func NewFunctionWithSqsDestinations(scope constructs.Construct, id *string, prop
 	successqueue := awssqs.NewQueue(this, jsii.String("SuccessQueue"), &sprops.SuccessQueueProps)
 	failurequeue := awssqs.NewQueue(this, jsii.String("FailureQueue"), &sprops.FailureQueueProps)
 
-	sprops.AddResourceToPolicy(successqueue.QueueArn())
-	sprops.AddResourceToPolicy(failurequeue.QueueArn())
+	sprops.AddResourceToPolicy(successqueue.QueueArn(), &sprops.SuccessQueuePolicyStatementProps)
+	sprops.AddResourceToPolicy(failurequeue.QueueArn(), &sprops.FailureQueuePolicyStatementProps)
 
 	destinationOnSuccess := awslambdadestinations.NewSqsDestination(successqueue)
 	destinationOnFailure := awslambdadestinations.NewSqsDestination(failurequeue)
@@ -65,13 +66,14 @@ func NewFunctionWithSqsDestinations(scope constructs.Construct, id *string, prop
 
 	fn := awslambda.NewFunction(this, jsii.String("LambdaFunction"), &sprops.FunctionProps)
 
-	sprops.AddPrincipalToPolicy(fn.Role())
+	sprops.AddPrincipalToPolicy(fn.Role(), &sprops.SuccessQueuePolicyStatementProps)
+	sprops.AddPrincipalToPolicy(fn.Role(), &sprops.FailureQueuePolicyStatementProps)
 
 	successqueue.GrantSendMessages(fn)
 	failurequeue.GrantSendMessages(fn)
 
-	successqueuepolicy := awsiam.NewPolicyStatement(&sprops.AllowReceiveMessageFromFunctionProps)
-	failurequeuepolicy := awsiam.NewPolicyStatement(&sprops.AllowReceiveMessageFromFunctionProps)
+	successqueuepolicy := awsiam.NewPolicyStatement(&sprops.SuccessQueuePolicyStatementProps)
+	failurequeuepolicy := awsiam.NewPolicyStatement(&sprops.FailureQueuePolicyStatementProps)
 
 	successqueue.AddToResourcePolicy(successqueuepolicy)
 	failurequeue.AddToResourcePolicy(failurequeuepolicy)
@@ -97,18 +99,18 @@ func (props *FunctionWithSqsDestinationsProps) AddOnFailureDestination(dst awsla
 	props.FunctionProps.OnFailure = dst
 }
 
-func (props *FunctionWithSqsDestinationsProps) AddPrincipalToPolicy(principal awsiam.IPrincipal) {
-	if props.AllowReceiveMessageFromFunctionProps.Principals == nil {
-		props.AllowReceiveMessageFromFunctionProps.Principals = &[]awsiam.IPrincipal{}
+func (props *FunctionWithSqsDestinationsProps) AddPrincipalToPolicy(principal awsiam.IPrincipal, sts *awsiam.PolicyStatementProps) {
+	if sts.Principals == nil {
+		sts.Principals = &[]awsiam.IPrincipal{}
 	}
-	*props.AllowReceiveMessageFromFunctionProps.Principals = append(*props.AllowReceiveMessageFromFunctionProps.Principals, principal)
+	*sts.Principals = append(*sts.Principals, principal)
 }
 
-func (props *FunctionWithSqsDestinationsProps) AddResourceToPolicy(resource *string) {
-	if props.AllowReceiveMessageFromFunctionProps.Resources == nil {
-		props.AllowReceiveMessageFromFunctionProps.Resources = &[]*string{}
+func (props *FunctionWithSqsDestinationsProps) AddResourceToPolicy(resource *string, sts *awsiam.PolicyStatementProps) {
+	if sts.Resources == nil {
+		sts.Resources = &[]*string{}
 	}
-	*props.AllowReceiveMessageFromFunctionProps.Resources = append(*props.AllowReceiveMessageFromFunctionProps.Resources, resource)
+	*sts.Resources = append(*sts.Resources, resource)
 }
 
 // IMPLEMENTATION
@@ -154,7 +156,17 @@ var FunctionWithSqsDestinationsProps_DEV FunctionWithSqsDestinationsProps = Func
 		RemovalPolicy: awscdk.RemovalPolicy_DESTROY,
 	},
 
-	AllowReceiveMessageFromFunctionProps: awsiam.PolicyStatementProps{
+	SuccessQueuePolicyStatementProps: awsiam.PolicyStatementProps{
+		Actions: jsii.Strings(
+			"sqs:GetQueueAttributes",
+			"sqs:GetQueueUrl",
+			"sqs:SendMessage"),
+		Effect: awsiam.Effect_ALLOW,
+		// Principals: At runtime ,
+		// Resource: At runtime
+	},
+
+	FailureQueuePolicyStatementProps: awsiam.PolicyStatementProps{
 		Actions: jsii.Strings(
 			"sqs:GetQueueAttributes",
 			"sqs:GetQueueUrl",
@@ -186,7 +198,17 @@ var FunctionWithSqsDestinationsProps_PROD FunctionWithSqsDestinationsProps = Fun
 		RemovalPolicy: awscdk.RemovalPolicy_DESTROY,
 	},
 
-	AllowReceiveMessageFromFunctionProps: awsiam.PolicyStatementProps{
+	SuccessQueuePolicyStatementProps: awsiam.PolicyStatementProps{
+		Actions: jsii.Strings(
+			"sqs:GetQueueAttributes",
+			"sqs:GetQueueUrl",
+			"sqs:SendMessage"),
+		Effect: awsiam.Effect_ALLOW,
+		// Principals: At runtime ,
+		// Resource: At runtime
+	},
+
+	FailureQueuePolicyStatementProps: awsiam.PolicyStatementProps{
 		Actions: jsii.Strings(
 			"sqs:GetQueueAttributes",
 			"sqs:GetQueueUrl",

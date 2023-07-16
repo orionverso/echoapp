@@ -11,7 +11,7 @@ import (
 )
 
 // DEFAULT
-func TestSynthApiWriteToBucket_DEFAULT(t *testing.T) {
+func TestSynthFargateWriteToSaveObject_DEFAULT(t *testing.T) {
 	defer func() {
 		if err := recover(); err != nil {
 			t.Fail()
@@ -30,13 +30,13 @@ func TestSynthApiWriteToBucket_DEFAULT(t *testing.T) {
 
 	stack := awscdk.NewStack(nil, nil, nil)
 
-	NewApiWriteToBucket(stack, jsii.String("TestSynth_DEFAULT"), nil)
+	NewFargateWriteToSaveObject(stack, jsii.String("TestSynth_DEFAULT"), nil)
 
 	assertions.Template_FromStack(stack, nil)
 }
 
 // DEVELOPMENT
-func TestSynthApiWriteToBucket_DEV(t *testing.T) {
+func TestSynthFargateWriteToSaveObject_DEV(t *testing.T) {
 	defer func() {
 		if err := recover(); err != nil {
 			t.Fail()
@@ -55,17 +55,13 @@ func TestSynthApiWriteToBucket_DEV(t *testing.T) {
 
 	stack := awscdk.NewStack(nil, nil, nil)
 
-	NewApiWriteToBucket(stack, jsii.String("TestSynth_DEV"), &ApiWriteToBucketProps_DEV)
+	NewFargateWriteToSaveObject(stack, jsii.String("TestSynth_DEV"), &FargateWriteToSaveObjectProps_DEV)
 
 	assertions.Template_FromStack(stack, &TemplateParsingOption_DEV)
 }
 
-var TemplateParsingOption_DEV assertions.TemplateParsingOptions = assertions.TemplateParsingOptions{
-	SkipCyclicalDependenciesCheck: jsii.Bool(false),
-}
-
 // PRODUCTION
-func TestSynthApiWriteToBucket_PROD(t *testing.T) {
+func TestSynthFargateWriteToSaveObject_PROD(t *testing.T) {
 	defer func() {
 		if err := recover(); err != nil {
 			t.Fail()
@@ -84,11 +80,7 @@ func TestSynthApiWriteToBucket_PROD(t *testing.T) {
 
 	stack := awscdk.NewStack(nil, nil, nil)
 
-	NewApiWriteToBucket(stack, jsii.String("TestSynth_PROD"), &ApiWriteToBucketProps_PROD)
+	NewFargateWriteToSaveObject(stack, jsii.String("TestSynth_PROD"), &FargateWriteToSaveObjectProps_PROD)
 
 	assertions.Template_FromStack(stack, &TemplateParsingOption_PROD)
-}
-
-var TemplateParsingOption_PROD assertions.TemplateParsingOptions = assertions.TemplateParsingOptions{
-	SkipCyclicalDependenciesCheck: jsii.Bool(false),
 }
