@@ -21,7 +21,7 @@ func NewCastorStack(scope constructs.Construct, id string, props *CastorStackPro
 	// }
 	// stack := awscdk.NewStack(scope, &id, &sprops)
 
-	computesave.NewFargateWriteToSaveObject(scope, jsii.String("ComputeSave"), &computesave.FargateWriteToSaveObjectProps_DEV)
+	computesave.NewApiWriteToSaveObject(scope, jsii.String("ComputeSave"), &computesave.ApiWriteToSaveObjectProps_DEV)
 	// return stack
 }
 

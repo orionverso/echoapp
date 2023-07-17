@@ -18,7 +18,7 @@ type ApiWriteToSaveBlockDataProps struct {
 	table.SaveBlockDataProps
 }
 
-type apiWriteToTable struct {
+type apiWriteToSaveBlockData struct {
 	awscdk.Stack
 	writer  lambdarestapi.ApiGatewayWithLambdaProxyIntegrated
 	storage table.SaveBlockData
@@ -67,7 +67,7 @@ func NewApiWriteToSaveBlockData(scope constructs.Construct, id *string, props *A
 		tb.TableName(),
 		&awslambda.EnvironmentOptions{})
 
-	var component ApiWriteToSaveBlockData = &apiWriteToTable{
+	var component ApiWriteToSaveBlockData = &apiWriteToSaveBlockData{
 		Stack:   stackless,
 		writer:  api,
 		storage: sv,
@@ -77,11 +77,11 @@ func NewApiWriteToSaveBlockData(scope constructs.Construct, id *string, props *A
 }
 
 // IMPLEMENTATION
-func (mo *apiWriteToTable) ApiProxyIntegrated() lambdarestapi.ApiGatewayWithLambdaProxyIntegrated {
+func (mo *apiWriteToSaveBlockData) ApiProxyIntegrated() lambdarestapi.ApiGatewayWithLambdaProxyIntegrated {
 	return mo.writer
 }
 
-func (mo *apiWriteToTable) SaveBlockData() table.SaveBlockData {
+func (mo *apiWriteToSaveBlockData) SaveBlockData() table.SaveBlockData {
 	return mo.storage
 }
 
