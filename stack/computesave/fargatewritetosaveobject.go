@@ -5,7 +5,6 @@ import (
 	"castor/construct/highlevel/repository"
 	fargate "castor/construct/pattern/applicationloadbalancedfargateservice"
 	"castor/stack/environment"
-	"fmt"
 	"log"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
@@ -45,11 +44,13 @@ func NewFargateWriteToSaveObject(scope constructs.Construct, id *string, props *
 		sprops = props
 	}
 
-	stackful := awscdk.NewStack(scope, jsii.String(fmt.Sprint(*id, "-stateful")), &sprops.StackProps)
+	this := constructs.NewConstruct(scope, id)
 
-	repo := repository.NewEcrRepo(stackful, jsii.String("EcrRepository"), &sprops.EcrRepoProps)
+	stackful := awscdk.NewStack(this, jsii.String("stateful"), &sprops.StackProps)
 
-	stackless := awscdk.NewStack(scope, id, &sprops.StackProps)
+	repo := repository.NewEcrRepo(stackful, jsii.String("FargateRepository"), &sprops.EcrRepoProps)
+
+	stackless := awscdk.NewStack(this, jsii.String("stateless"), &sprops.StackProps)
 
 	sprops.AddContainerImageToApplicationLoadBalancedFargate(repo.Image())
 
@@ -68,9 +69,10 @@ func NewFargateWriteToSaveObject(scope constructs.Construct, id *string, props *
 	defaultcontainer.AddEnvironment(jsii.String("DESTINATION"), bk.BucketName())
 
 	var component FargateWriteToSaveObject = &fargateWriteToSaveObject{
-		Stack:   stackless,
-		writer:  fg,
-		storage: sv,
+		Stack:      stackless,
+		writer:     fg,
+		storage:    sv,
+		repository: repo,
 	}
 
 	return component

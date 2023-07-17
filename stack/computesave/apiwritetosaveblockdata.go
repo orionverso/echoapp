@@ -41,11 +41,15 @@ func NewApiWriteToSaveBlockData(scope constructs.Construct, id *string, props *A
 		sprops = props
 	}
 
-	stack := awscdk.NewStack(scope, id, &sprops.StackProps)
+	this := constructs.NewConstruct(scope, id)
 
-	api := lambdarestapi.NewApiGatewayWithLambdaProxyIntegrated(stack, jsii.String("Writer"), &sprops.ApiGatewayWithLambdaProxyIntegratedProps)
+	awscdk.NewStack(this, jsii.String("stateful"), &sprops.StackProps) // empty stack //Delete fargate stateful
 
-	sv := table.NewSaveBlockData(stack, jsii.String("Storage"), &sprops.SaveBlockDataProps)
+	stackless := awscdk.NewStack(this, jsii.String("stateless"), &sprops.StackProps)
+
+	api := lambdarestapi.NewApiGatewayWithLambdaProxyIntegrated(stackless, jsii.String("Writer"), &sprops.ApiGatewayWithLambdaProxyIntegratedProps)
+
+	sv := table.NewSaveBlockData(stackless, jsii.String("Storage"), &sprops.SaveBlockDataProps)
 
 	tb := sv.Table()
 
@@ -64,7 +68,7 @@ func NewApiWriteToSaveBlockData(scope constructs.Construct, id *string, props *A
 		&awslambda.EnvironmentOptions{})
 
 	var component ApiWriteToSaveBlockData = &apiWriteToTable{
-		Stack:   stack,
+		Stack:   stackless,
 		writer:  api,
 		storage: sv,
 	}

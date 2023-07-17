@@ -13,7 +13,7 @@ type FargateProps struct {
 	awsecspatterns.ApplicationLoadBalancedFargateServiceProps
 }
 
-type fargateEcrImage struct {
+type fargate struct {
 	constructs.Construct
 	applicationloadbalancedfargateservice awsecspatterns.ApplicationLoadBalancedFargateService
 }
@@ -36,12 +36,12 @@ func NewFargate(scope constructs.Construct, id *string, props *FargateProps) Far
 
 	this := constructs.NewConstruct(scope, id)
 
-	fargate := awsecspatterns.NewApplicationLoadBalancedFargateService(this, jsii.String("ApplicationLoadBalancedFargateService"),
+	fg := awsecspatterns.NewApplicationLoadBalancedFargateService(this, jsii.String("ApplicationLoadBalancedFargateService"),
 		&sprops.ApplicationLoadBalancedFargateServiceProps)
 
-	var component Fargate = &fargateEcrImage{
+	var component Fargate = &fargate{
 		Construct:                             this,
-		applicationloadbalancedfargateservice: fargate,
+		applicationloadbalancedfargateservice: fg,
 	}
 	return component
 }
@@ -54,7 +54,7 @@ func (props *FargateProps) AddContainerImageToApplicationLoadBalancedFargate(ima
 }
 
 // IMPLEMENTATION
-func (fa *fargateEcrImage) ApplicationLoadBalancedFargateService() awsecspatterns.ApplicationLoadBalancedFargateService {
+func (fa *fargate) ApplicationLoadBalancedFargateService() awsecspatterns.ApplicationLoadBalancedFargateService {
 	return fa.applicationloadbalancedfargateservice
 }
 

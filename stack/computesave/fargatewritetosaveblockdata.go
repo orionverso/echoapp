@@ -5,7 +5,6 @@ import (
 	"castor/construct/highlevel/table"
 	fargate "castor/construct/pattern/applicationloadbalancedfargateservice"
 	"castor/stack/environment"
-	"fmt"
 	"log"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
@@ -45,19 +44,21 @@ func NewFargateWriteToSaveBlockData(scope constructs.Construct, id *string, prop
 		sprops = props
 	}
 
-	stackful := awscdk.NewStack(scope, jsii.String(fmt.Sprint(*id, "-stateful")), &sprops.StackProps)
+	this := constructs.NewConstruct(scope, id)
 
-	repo := repository.NewEcrRepo(stackful, jsii.String("EcrRepository"), &sprops.EcrRepoProps)
+	stackful := awscdk.NewStack(this, jsii.String("stateful"), &sprops.StackProps)
 
-	stackless := awscdk.NewStack(scope, id, &sprops.StackProps)
+	repo := repository.NewEcrRepo(stackful, jsii.String("FargateRepository"), &sprops.EcrRepoProps)
+
+	stackless := awscdk.NewStack(this, jsii.String("stateless"), &sprops.StackProps)
 
 	sprops.AddContainerImageToApplicationLoadBalancedFargate(repo.Image())
+
+	sv := table.NewSaveBlockData(stackless, jsii.String("Storage"), &sprops.SaveBlockDataProps)
 
 	fg := fargate.NewFargate(stackless, jsii.String("Writer"), &sprops.FargateProps)
 
 	fgrole := fg.ApplicationLoadBalancedFargateService().TaskDefinition().TaskRole()
-
-	sv := table.NewSaveBlockData(stackless, jsii.String("Storage"), &sprops.SaveBlockDataProps)
 
 	tb := sv.Table()
 
