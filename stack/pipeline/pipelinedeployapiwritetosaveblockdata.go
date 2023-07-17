@@ -47,7 +47,7 @@ func NewPipelineDeployApiWriteToSaveBlockData(scope constructs.Construct, id *st
 		sprops = props
 	}
 
-	stack := awscdk.NewStack(scope, jsii.String("ComputeSavePipeline"), &sprops.StackProps)
+	stack := awscdk.NewStack(scope, id, &sprops.StackProps)
 
 	conn := awscodestarconnections.NewCfnConnection(stack, jsii.String("CodeStarConnectionToGitHub"), &sprops.CfnConnectionProps)
 
@@ -121,7 +121,8 @@ var PipelineDeployApiWriteToSaveBlockDataProps_DEV PipelineDeployApiWriteToSaveB
 	BranchProps: "main",
 
 	CodeBuildSynthProps: pipelines.CodeBuildStepProps{
-		Commands:         jsii.Strings("npm install -g aws-cdk", "cdk synth"),
+		Commands: jsii.Strings("npm install -g aws-cdk", "cd asset/lambda/echo",
+			"./compile.sh handler echolambda.go", "cd ../../../", "cdk synth"),
 		BuildEnvironment: &awscodebuild.BuildEnvironment{},
 	},
 
@@ -156,8 +157,11 @@ var PipelineDeployApiWriteToSaveBlockDataProps_PROD PipelineDeployApiWriteToSave
 	BranchProps: "main",
 
 	CodeBuildSynthProps: pipelines.CodeBuildStepProps{
-		Commands:         jsii.Strings("npm install -g aws-cdk", "cdk synth"),
-		BuildEnvironment: &awscodebuild.BuildEnvironment{},
+		Commands: jsii.Strings("npm install -g aws-cdk", "cd asset/lambda/echo",
+			"./compile.sh handler echolambda.go", "cd ../../../", "cdk synth"),
+		BuildEnvironment: &awscodebuild.BuildEnvironment{
+			EnvironmentVariables: &map[string]*awscodebuild.BuildEnvironmentVariable{},
+		},
 	},
 
 	CodePipelineProps: pipelines.CodePipelineProps{

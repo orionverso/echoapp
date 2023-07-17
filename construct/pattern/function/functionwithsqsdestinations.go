@@ -1,9 +1,7 @@
 package function
 
 import (
-	"fmt"
 	"log"
-	"os"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsiam"
@@ -140,7 +138,7 @@ var FunctionWithSqsDestinationsProps_DEV FunctionWithSqsDestinationsProps = Func
 	FunctionProps: awslambda.FunctionProps{
 		Runtime:      awslambda.Runtime_GO_1_X(),
 		Handler:      jsii.String("handler"),
-		Code:         awslambda.Code_FromAsset(jsii.String(fmt.Sprint(os.Getenv("ASSET_DIR"), "/echo/handler.zip")), nil),
+		Code:         awslambda.Code_FromAsset(jsii.String("asset/lambda/echo/handler.zip"), nil),
 		FunctionName: jsii.String("FunctionWithSqsDestinations-dev"),
 		Description:  jsii.String("This function write the echo request from api gateway to storage solution"),
 		Architecture: awslambda.Architecture_X86_64(),
@@ -182,7 +180,7 @@ var FunctionWithSqsDestinationsProps_PROD FunctionWithSqsDestinationsProps = Fun
 	FunctionProps: awslambda.FunctionProps{
 		Runtime:      awslambda.Runtime_GO_1_X(),
 		Handler:      jsii.String("handler"),
-		Code:         awslambda.Code_FromAsset(jsii.String(fmt.Sprint(os.Getenv("ASSET_DIR"), "/echo/handler.zip")), nil),
+		Code:         awslambda.Code_FromAsset(jsii.String("asset/lambda/echo/handler.zip"), nil),
 		FunctionName: jsii.String("FunctionWithSqsDestinations-prod"),
 		Description:  jsii.String("This function write the echo request from api gateway to storage solution"),
 		Architecture: awslambda.Architecture_X86_64(),

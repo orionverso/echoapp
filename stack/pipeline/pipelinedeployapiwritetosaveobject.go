@@ -47,7 +47,7 @@ func NewPipelineDeployApiWriteToSaveObject(scope constructs.Construct, id *strin
 		sprops = props
 	}
 
-	stack := awscdk.NewStack(scope, jsii.String("ComputeSavePipeline"), &sprops.StackProps)
+	stack := awscdk.NewStack(scope, id, &sprops.StackProps)
 
 	conn := awscodestarconnections.NewCfnConnection(stack, jsii.String("CodeStarConnectionToGitHub"), &sprops.CfnConnectionProps)
 

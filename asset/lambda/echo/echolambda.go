@@ -18,7 +18,7 @@ func handler(ctx context.Context, ev events.APIGatewayProxyRequest) (events.APIG
 		log.Panicln("Configuration has not been loaded")
 	}
 
-	rec := receiver.GetReceiver(ctx, cfg) // Change service destination if change env vars
+	rec := receiver.GetReceiverFromEnv(ctx, cfg) // Change service destination if change env vars
 	if err != nil {
 		log.Panicln("Receive has not been loaded")
 	}
