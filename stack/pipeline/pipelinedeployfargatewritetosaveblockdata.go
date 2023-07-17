@@ -1,6 +1,7 @@
 package pipeline
 
 import (
+	"castor/construct/highlevel/repository"
 	"castor/stack/computesave"
 	"castor/stack/environment"
 	"log"
@@ -9,6 +10,7 @@ import (
 	"github.com/aws/aws-cdk-go/awscdk/v2/awscodebuild"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awscodestarconnections"
 	"github.com/aws/aws-cdk-go/awscdk/v2/pipelines"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
 )
@@ -20,9 +22,10 @@ type PipelineDeployFargateWriteToSaveBlockDataProps struct {
 	FargateWriteToSaveBlockDataProps_FIRST_ENV computesave.FargateWriteToSaveBlockDataProps
 	awscodestarconnections.CfnConnectionProps
 	pipelines.ConnectionSourceOptions
-	RepositoryProps     string
-	BranchProps         string
-	CodeBuildSynthProps pipelines.CodeBuildStepProps
+	RepositoryProps         string
+	BranchProps             string
+	CodeBuildSynthProps     pipelines.CodeBuildStepProps
+	CodeBuildPushImageProps pipelines.CodeBuildStepProps
 	pipelines.CodePipelineProps
 }
 
@@ -67,7 +70,7 @@ func NewPipelineDeployFargateWriteToSaveBlockData(scope constructs.Construct, id
 
 	computesave.NewFargateWriteToSaveBlockData(stage, jsii.String("ComputeSave"), &sprops.FargateWriteToSaveBlockDataProps_FIRST_ENV)
 
-	pipe.AddStage(stage, &sprops.AddStageOpts)
+	pipelines.NewCodeBuildStep(jsii.String("PushImageToEcr"), &sprops.CodeBuildPushImageProps)
 
 	var component PipelineDeployFargateWriteToSaveBlockData = &pipelineDeployFargateWriteToSaveBlockData{
 		Stack:        stack,
@@ -88,6 +91,13 @@ func (props *PipelineDeployFargateWriteToSaveBlockDataProps) AddRemoteRepository
 
 func (props *PipelineDeployFargateWriteToSaveBlockDataProps) AddTemplateToCodePipeline(template pipelines.CodeBuildStep) {
 	props.CodePipelineProps.Synth = template
+}
+
+func (props *PipelineDeployFargateWriteToSaveBlockDataProps) AddEnvironmentVariableToCodeBuildStep(step pipelines.CodeBuildStep, key *string, value *string) {
+	var vars map[string]*awscodebuild.BuildEnvironmentVariable = *step.BuildEnvironment().EnvironmentVariables
+	vars[aws.ToString(key)] = &awscodebuild.BuildEnvironmentVariable{
+		Value: aws.ToString(value),
+	}
 }
 
 // IMPLEMENTATION
@@ -123,6 +133,42 @@ var PipelineDeployFargateWriteToSaveBlockDataProps_DEV PipelineDeployFargateWrit
 	CodeBuildSynthProps: pipelines.CodeBuildStepProps{
 		Commands:         jsii.Strings("npm install -g aws-cdk", "cdk synth"),
 		BuildEnvironment: &awscodebuild.BuildEnvironment{},
+	},
+
+	CodeBuildPushImageProps: pipelines.CodeBuildStepProps{
+		Commands: jsii.Strings(
+			"cd asset/docker/webserver",
+			"cache=\"/tmp/creds\"",
+			"aws sts assume-role --role-arn $PUSH_ROLE_ARN --role-session-name pushingimage > $cache", // test
+			"export AWS_ACCESS_KEY_ID=$(cat $cache | jq -r '.Credentials.AccessKeyId')",
+			"export AWS_SECRET_ACCESS_KEY=$(cat $cache | jq -r '.Credentials.SecretAccessKey')",
+			"export AWS_SESSION_TOKEN=$(cat $cache | jq -r '.Credentials.SessionToken')",
+			"aws ecr get-login-password --region $CDK_REGION | docker login --username AWS --password-stdin $CDK_ACCOUNT.dkr.ecr.$CDK_REGION.amazonaws.com",
+			"docker build -t $REPOSITORY_NAME .",
+			"docker tag $REPOSITORY_NAME:latest $CDK_ACCOUNT.dkr.ecr.$CDK_REGION.amazonaws.com/$REPOSITORY_NAME:latest",
+			"docker push $CDK_ACCOUNT.dkr.ecr.$CDK_REGION.amazonaws.com/$REPOSITORY_NAME:latest",
+		),
+
+		BuildEnvironment: &awscodebuild.BuildEnvironment{
+			Privileged: jsii.Bool(true), // Run Docker inside CodeBuild container
+			EnvironmentVariables: &map[string]*awscodebuild.BuildEnvironmentVariable{
+				"CDK_REGION": {
+					Value: aws.ToString(environment.StackProps_DEV.Env.Region),
+				},
+
+				"CDK_ACCOUNT": {
+					Value: aws.ToString(environment.StackProps_DEV.Env.Account),
+				},
+				"REPOSITORY_NAME": {
+					Value: aws.ToString(repository.EcrRepoProps_DEV.RepositoryName),
+				},
+				/*
+					"PUSH_ROLE_ARN": &awscodebuild.BuildEnvironmentVariable{
+						//Value: At runtime
+					},
+				*/
+			},
+		},
 	},
 
 	CodePipelineProps: pipelines.CodePipelineProps{

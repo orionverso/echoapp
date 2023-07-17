@@ -63,12 +63,16 @@ func (mo *ecrRepo) Image() awsecs.EcrImage {
 // SETTINGS
 // DEVELOPMENT
 var EcrRepoProps_DEV EcrRepoProps = EcrRepoProps{
-	RepositoryProps: awsecr.RepositoryProps{},
-	Tag:             "latest",
+	RepositoryProps: awsecr.RepositoryProps{
+		RepositoryName: jsii.String("echoapp-dev"),
+	},
+	Tag: "latest",
 }
 
 // PRODUCTION
 var EcrRepoProps_PROD EcrRepoProps = EcrRepoProps{
-	RepositoryProps: awsecr.RepositoryProps{},
-	Tag:             "latest",
+	RepositoryProps: awsecr.RepositoryProps{
+		RepositoryName: jsii.String("echoapp-prod"),
+	},
+	Tag: "latest",
 }
