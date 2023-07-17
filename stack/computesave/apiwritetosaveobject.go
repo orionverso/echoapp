@@ -43,15 +43,15 @@ func NewApiWriteToSaveObject(scope constructs.Construct, id *string, props *ApiW
 
 	this := constructs.NewConstruct(scope, id)
 
-	awscdk.NewStack(this, jsii.String("stateful"), &sprops.StackProps)
+	awscdk.NewStack(this, stateful, &sprops.StackProps)
 
-	stackless := awscdk.NewStack(this, jsii.String("stateless"), &sprops.StackProps)
+	stackless := awscdk.NewStack(this, stateless, &sprops.StackProps)
 
-	api := lambdarestapi.NewApiGatewayWithLambdaProxyIntegrated(stackless, jsii.String("Writer"), &sprops.ApiGatewayWithLambdaProxyIntegratedProps)
+	api := lambdarestapi.NewApiGatewayWithLambdaProxyIntegrated(stackless, serverless, &sprops.ApiGatewayWithLambdaProxyIntegratedProps)
 
 	fn := api.FunctionWithSqsDestinations().Function()
 
-	sv := bucket.NewSaveObject(stackless, jsii.String("Storage"), &sprops.SaveObjectProps)
+	sv := bucket.NewSaveObject(stackless, object, &sprops.SaveObjectProps)
 
 	bk := sv.Bucket()
 

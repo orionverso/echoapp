@@ -43,13 +43,13 @@ func NewApiWriteToSaveBlockData(scope constructs.Construct, id *string, props *A
 
 	this := constructs.NewConstruct(scope, id)
 
-	awscdk.NewStack(this, jsii.String("stateful"), &sprops.StackProps) // empty stack //Delete fargate stateful
+	awscdk.NewStack(this, stateful, &sprops.StackProps) // empty stack //Delete fargate stateful
 
-	stackless := awscdk.NewStack(this, jsii.String("stateless"), &sprops.StackProps)
+	stackless := awscdk.NewStack(this, stateless, &sprops.StackProps)
 
-	api := lambdarestapi.NewApiGatewayWithLambdaProxyIntegrated(stackless, jsii.String("Writer"), &sprops.ApiGatewayWithLambdaProxyIntegratedProps)
+	api := lambdarestapi.NewApiGatewayWithLambdaProxyIntegrated(stackless, serverless, &sprops.ApiGatewayWithLambdaProxyIntegratedProps)
 
-	sv := table.NewSaveBlockData(stackless, jsii.String("Storage"), &sprops.SaveBlockDataProps)
+	sv := table.NewSaveBlockData(stackless, database, &sprops.SaveBlockDataProps)
 
 	tb := sv.Table()
 

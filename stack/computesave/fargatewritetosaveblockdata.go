@@ -46,19 +46,19 @@ func NewFargateWriteToSaveBlockData(scope constructs.Construct, id *string, prop
 
 	this := constructs.NewConstruct(scope, id)
 
-	stackful := awscdk.NewStack(this, jsii.String("stateful"), &sprops.StackProps)
+	stackful := awscdk.NewStack(this, stateful, &sprops.StackProps)
 
-	repo := repository.NewEcrRepo(stackful, jsii.String("FargateRepository"), &sprops.EcrRepoProps)
+	repo := repository.NewEcrRepo(stackful, fargaterepo, &sprops.EcrRepoProps)
 
-	stackless := awscdk.NewStack(this, jsii.String("stateless"), &sprops.StackProps)
+	stackless := awscdk.NewStack(this, stateless, &sprops.StackProps)
 
 	sprops.AddContainerImageToApplicationLoadBalancedFargate(repo.Image())
 
-	sv := table.NewSaveBlockData(stackless, jsii.String("Storage"), &sprops.SaveBlockDataProps)
-
-	fg := fargate.NewFargate(stackless, jsii.String("Writer"), &sprops.FargateProps)
+	fg := fargate.NewFargate(stackless, server, &sprops.FargateProps)
 
 	fgrole := fg.ApplicationLoadBalancedFargateService().TaskDefinition().TaskRole()
+
+	sv := table.NewSaveBlockData(stackless, database, &sprops.SaveBlockDataProps)
 
 	tb := sv.Table()
 
