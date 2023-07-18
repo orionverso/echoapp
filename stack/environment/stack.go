@@ -8,10 +8,6 @@ import (
 	"github.com/aws/jsii-runtime-go"
 )
 
-var StackProps_DEFAULT awscdk.StackProps = awscdk.StackProps{
-	Env: DefaultEnv(),
-}
-
 var StackProps_DEV awscdk.StackProps = awscdk.StackProps{
 	Env: DevEnv(),
 }
@@ -27,13 +23,10 @@ func ProdEnv() *awscdk.Environment {
 	fmt.Println("PROD_REGION", region)
 	fmt.Println("PROD_ACCOUNT", account)
 
-	if account != "" {
-		return &awscdk.Environment{
-			Region:  jsii.String(region),
-			Account: jsii.String(account),
-		}
+	return &awscdk.Environment{
+		Region:  jsii.String(region),
+		Account: jsii.String(account),
 	}
-	return DefaultEnv()
 }
 
 func DevEnv() *awscdk.Environment {
@@ -42,22 +35,6 @@ func DevEnv() *awscdk.Environment {
 
 	fmt.Println("DEV_REGION", region)
 	fmt.Println("DEV_ACCOUNT", account)
-
-	if account != "" && region != "" {
-		return &awscdk.Environment{
-			Region:  jsii.String(region),
-			Account: jsii.String(account),
-		}
-	}
-	return DefaultEnv()
-}
-
-func DefaultEnv() *awscdk.Environment {
-	region := os.Getenv("CDK_DEFAULT_REGION")
-	account := os.Getenv("CDK_DEFAULT_ACCOUNT")
-
-	fmt.Println("DEFAULT_REGION", region)
-	fmt.Println("DEFAULT_ACCOUNT", account)
 
 	return &awscdk.Environment{
 		Region:  jsii.String(region),

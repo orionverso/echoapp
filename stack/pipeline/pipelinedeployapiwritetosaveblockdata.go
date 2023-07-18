@@ -69,17 +69,17 @@ func NewPipelineDeployApiWriteToSaveBlockData(scope constructs.Construct, id *st
 
 	computesave.NewApiWriteToSaveBlockData(stagedev, jsii.String("ComputeSave"), &sprops.ApiWriteToSaveBlockDataProps_FIRST_ENV)
 
-	stagedevdeployment := pipe.AddStage(stagedev, &sprops.AddStageOpts)
+	pipe.AddStage(stagedev, &sprops.AddStageOpts)
 
-	stageprod := awscdk.NewStage(stack, jsii.String("ComputeSaveStage"), &sprops.StageProps)
-
-	promotedecision := pipelines.NewManualApprovalStep(jsii.String("PromoteToProduction"), &sprops.PromoteToProductionDecisionProps)
-
-	stagedevdeployment.AddPost(promotedecision)
-
-	computesave.NewApiWriteToSaveBlockData(stageprod, jsii.String("ComputeSave"), &sprops.ApiWriteToSaveBlockDataProps_SECOND_ENV)
-
-	pipe.AddStage(stageprod, &sprops.AddStageOpts)
+	// stageprod := awscdk.NewStage(stack, jsii.String("ComputeSaveStage"), &sprops.StageProps)
+	//
+	// promotedecision := pipelines.NewManualApprovalStep(jsii.String("PromoteToProduction"), &sprops.PromoteToProductionDecisionProps)
+	//
+	// stagedevdeployment.AddPost(promotedecision)
+	//
+	// computesave.NewApiWriteToSaveBlockData(stageprod, jsii.String("ComputeSave"), &sprops.ApiWriteToSaveBlockDataProps_SECOND_ENV)
+	//
+	// pipe.AddStage(stageprod, &sprops.AddStageOpts)
 
 	var component PipelineDeployApiWriteToSaveBlockData = &pipelineDeployApiWriteToSaveBlockData{
 		Stack:        stack,

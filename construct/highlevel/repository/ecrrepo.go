@@ -3,6 +3,7 @@ package repository
 import (
 	"log"
 
+	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsecr"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsecs"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsiam"
@@ -84,7 +85,9 @@ func (mo *ecrRepo) PushImagePolicyStatement() awsiam.PolicyStatement {
 // DEVELOPMENT
 var EcrRepoProps_DEV EcrRepoProps = EcrRepoProps{
 	RepositoryProps: awsecr.RepositoryProps{
-		RepositoryName: jsii.String("echoapp-dev"),
+		RepositoryName:   jsii.String("echoapp-dev"),
+		RemovalPolicy:    awscdk.RemovalPolicy_DESTROY,
+		AutoDeleteImages: jsii.Bool(true),
 	},
 	Tag: "latest",
 
@@ -101,7 +104,9 @@ var EcrRepoProps_DEV EcrRepoProps = EcrRepoProps{
 // PRODUCTION
 var EcrRepoProps_PROD EcrRepoProps = EcrRepoProps{
 	RepositoryProps: awsecr.RepositoryProps{
-		RepositoryName: jsii.String("echoapp-prod"),
+		RepositoryName:   jsii.String("echoapp-prod"),
+		RemovalPolicy:    awscdk.RemovalPolicy_DESTROY,
+		AutoDeleteImages: jsii.Bool(true),
 	},
 	Tag: "latest",
 }
