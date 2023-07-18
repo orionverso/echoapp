@@ -31,6 +31,7 @@ type PipelineDeployFargateWriteToSaveBlockDataProps struct {
 	CodeBuildPushImageProps        pipelines.CodeBuildStepProps
 	CodeBuildPushImageCrossAccount pipelines.CodeBuildStepProps
 	pipelines.CodePipelineProps
+	PromoteToProductionProps      pipelines.ManualApprovalStepProps
 	PushImagePolicyStatementProps awsiam.PolicyStatementProps
 	CrossAccountRole              awsiam.RoleProps
 }
@@ -80,7 +81,11 @@ func NewPipelineDeployFargateWriteToSaveBlockData(scope constructs.Construct, id
 
 	pushimage := pipelines.NewCodeBuildStep(jsii.String("PushImageToEcr"), &sprops.CodeBuildPushImageProps)
 
+	promotedecision := pipelines.NewManualApprovalStep(jsii.String("PromoteToProduction"), &sprops.PromoteToProductionProps)
+
 	sprops.AddPostStepsToStackStep(0, stagedevdeployment, pushimage)
+
+	stagedevdeployment.AddPost(promotedecision)
 	/////////////////////////
 	sprops.StageProps.Env.Account = environment.StageProps_PROD.Env.Account
 	sprops.StackProps.Env.Account = environment.StackProps_PROD.Env.Account
