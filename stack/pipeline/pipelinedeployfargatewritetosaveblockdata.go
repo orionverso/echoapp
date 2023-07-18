@@ -4,11 +4,13 @@ import (
 	"castor/construct/highlevel/repository"
 	"castor/stack/computesave"
 	"castor/stack/environment"
+	"fmt"
 	"log"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awscodebuild"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awscodestarconnections"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awsiam"
 	"github.com/aws/aws-cdk-go/awscdk/v2/pipelines"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/constructs-go/constructs/v10"
@@ -27,6 +29,7 @@ type PipelineDeployFargateWriteToSaveBlockDataProps struct {
 	CodeBuildSynthProps     pipelines.CodeBuildStepProps
 	CodeBuildPushImageProps pipelines.CodeBuildStepProps
 	pipelines.CodePipelineProps
+	PushImagePolicyStatementProps awsiam.PolicyStatementProps
 }
 
 type pipelineDeployFargateWriteToSaveBlockData struct {
@@ -70,7 +73,11 @@ func NewPipelineDeployFargateWriteToSaveBlockData(scope constructs.Construct, id
 
 	computesave.NewFargateWriteToSaveBlockData(stage, jsii.String("ComputeSave"), &sprops.FargateWriteToSaveBlockDataProps_FIRST_ENV)
 
-	pipelines.NewCodeBuildStep(jsii.String("PushImageToEcr"), &sprops.CodeBuildPushImageProps)
+	stagedeployment := pipe.AddStage(stage, &sprops.AddStageOpts)
+
+	pushimage := pipelines.NewCodeBuildStep(jsii.String("PushImageToEcr"), &sprops.CodeBuildPushImageProps)
+
+	sprops.AddPostStepsToStackStep(0, stagedeployment, pushimage)
 
 	var component PipelineDeployFargateWriteToSaveBlockData = &pipelineDeployFargateWriteToSaveBlockData{
 		Stack:        stack,
@@ -93,11 +100,37 @@ func (props *PipelineDeployFargateWriteToSaveBlockDataProps) AddTemplateToCodePi
 	props.CodePipelineProps.Synth = template
 }
 
-func (props *PipelineDeployFargateWriteToSaveBlockDataProps) AddEnvironmentVariableToCodeBuildStep(step pipelines.CodeBuildStep, key *string, value *string) {
-	var vars map[string]*awscodebuild.BuildEnvironmentVariable = *step.BuildEnvironment().EnvironmentVariables
-	vars[aws.ToString(key)] = &awscodebuild.BuildEnvironmentVariable{
-		Value: aws.ToString(value),
+func (props *PipelineDeployFargateWriteToSaveBlockDataProps) AddEnvironmentVariableToCodeBuildStep(key *string, value *string, step *pipelines.CodeBuildStepProps) {
+	if step.BuildEnvironment == nil {
+		var buildenvironment *awscodebuild.BuildEnvironment = &awscodebuild.BuildEnvironment{}
+		step.BuildEnvironment = buildenvironment
 	}
+	var vars map[string]*awscodebuild.BuildEnvironmentVariable = *step.BuildEnvironment.EnvironmentVariables
+	vars[*key] = &awscodebuild.BuildEnvironmentVariable{
+		Value: *value,
+	}
+}
+
+func (props *PipelineDeployFargateWriteToSaveBlockDataProps) AddPolicyStamentToCodeBuildStep(policy awsiam.PolicyStatement, step *pipelines.CodeBuildStepProps) {
+	if step.RolePolicyStatements == nil {
+		var rolepolicystatements *[]awsiam.PolicyStatement = &[]awsiam.PolicyStatement{}
+		step.RolePolicyStatements = rolepolicystatements
+	}
+	*step.RolePolicyStatements = append(*step.RolePolicyStatements, policy)
+}
+
+func (props *PipelineDeployFargateWriteToSaveBlockDataProps) AddPostStepsToStackStep(stackposition int, stagedeployment pipelines.StageDeployment, steps ...pipelines.Step) {
+	var stacks []pipelines.StackDeployment = *stagedeployment.Stacks()
+	var stack pipelines.StackDeployment = stacks[stackposition]
+	stack.AddStackSteps(&[]pipelines.Step{}, &[]pipelines.Step{}, &steps)
+}
+
+func (props *PipelineDeployFargateWriteToSaveBlockDataProps) AddResourceToPolicyStatement(arn *string, sts *awsiam.PolicyStatementProps) {
+	if sts.Resources == nil {
+		var resource *[]*string = &[]*string{}
+		sts.Resources = resource
+	}
+	*sts.Resources = append(*sts.Resources, arn)
 }
 
 // IMPLEMENTATION
@@ -137,13 +170,8 @@ var PipelineDeployFargateWriteToSaveBlockDataProps_DEV PipelineDeployFargateWrit
 
 	CodeBuildPushImageProps: pipelines.CodeBuildStepProps{
 		Commands: jsii.Strings(
-			"cd asset/docker/webserver",
-			"cache=\"/tmp/creds\"",
-			"aws sts assume-role --role-arn $PUSH_ROLE_ARN --role-session-name pushingimage > $cache", // test
-			"export AWS_ACCESS_KEY_ID=$(cat $cache | jq -r '.Credentials.AccessKeyId')",
-			"export AWS_SECRET_ACCESS_KEY=$(cat $cache | jq -r '.Credentials.SecretAccessKey')",
-			"export AWS_SESSION_TOKEN=$(cat $cache | jq -r '.Credentials.SessionToken')",
 			"aws ecr get-login-password --region $CDK_REGION | docker login --username AWS --password-stdin $CDK_ACCOUNT.dkr.ecr.$CDK_REGION.amazonaws.com",
+			"cd asset/docker/webserver",
 			"docker build -t $REPOSITORY_NAME .",
 			"docker tag $REPOSITORY_NAME:latest $CDK_ACCOUNT.dkr.ecr.$CDK_REGION.amazonaws.com/$REPOSITORY_NAME:latest",
 			"docker push $CDK_ACCOUNT.dkr.ecr.$CDK_REGION.amazonaws.com/$REPOSITORY_NAME:latest",
@@ -168,6 +196,29 @@ var PipelineDeployFargateWriteToSaveBlockDataProps_DEV PipelineDeployFargateWrit
 					},
 				*/
 			},
+		},
+		RolePolicyStatements: &[]awsiam.PolicyStatement{
+			awsiam.NewPolicyStatement(&awsiam.PolicyStatementProps{
+				Actions:   jsii.Strings("ecr:GetAuthorizationToken"),
+				Resources: jsii.Strings("*"),
+			}),
+			awsiam.NewPolicyStatement(&awsiam.PolicyStatementProps{
+				Actions: jsii.Strings(
+					"ecr:GetAuthorizationToken",
+					"ecr:BatchCheckLayerAvailability",
+					"ecr:GetDownloadUrlForLayer",
+					"ecr:GetRepositoryPolicy",
+					"ecr:DescribeRepositories",
+					"ecr:ListImages",
+					"ecr:DescribeImages",
+					"ecr:BatchGetImage",
+					"ecr:InitiateLayerUpload",
+					"ecr:UploadLayerPart",
+					"ecr:CompleteLayerUpload",
+					"ecr:PutImage",
+				),
+				Resources: jsii.Strings(fmt.Sprint("arn:aws:ecr:", *environment.StackProps_DEV.Env.Region, ":", *environment.StackProps_DEV.Env.Account, ":repository/echoapp-dev"), fmt.Sprint("arn:aws:ecr:", *environment.StackProps_DEV.Env.Region, ":", *environment.StackProps_DEV.Env.Account, ":repository/echoapp-dev/*")),
+			}),
 		},
 	},
 

@@ -17,12 +17,14 @@ type PipelineDeployApiWriteToSaveBlockDataProps struct {
 	awscdk.StackProps
 	awscdk.StageProps
 	pipelines.AddStageOpts
-	ApiWriteToSaveBlockDataProps_FIRST_ENV computesave.ApiWriteToSaveBlockDataProps
+	ApiWriteToSaveBlockDataProps_FIRST_ENV  computesave.ApiWriteToSaveBlockDataProps
+	ApiWriteToSaveBlockDataProps_SECOND_ENV computesave.ApiWriteToSaveBlockDataProps
 	awscodestarconnections.CfnConnectionProps
 	pipelines.ConnectionSourceOptions
-	RepositoryProps     string
-	BranchProps         string
-	CodeBuildSynthProps pipelines.CodeBuildStepProps
+	RepositoryProps                  string
+	BranchProps                      string
+	CodeBuildSynthProps              pipelines.CodeBuildStepProps
+	PromoteToProductionDecisionProps pipelines.ManualApprovalStepProps
 	pipelines.CodePipelineProps
 }
 
@@ -63,11 +65,21 @@ func NewPipelineDeployApiWriteToSaveBlockData(scope constructs.Construct, id *st
 
 	pipe := pipelines.NewCodePipeline(stack, jsii.String("CodePipeline"), &sprops.CodePipelineProps)
 
-	stage := awscdk.NewStage(stack, jsii.String("ComputeSaveStage"), &sprops.StageProps)
+	stagedev := awscdk.NewStage(stack, jsii.String("ComputeSaveStage"), &sprops.StageProps)
 
-	computesave.NewApiWriteToSaveBlockData(stage, jsii.String("ComputeSave"), &sprops.ApiWriteToSaveBlockDataProps_FIRST_ENV)
+	computesave.NewApiWriteToSaveBlockData(stagedev, jsii.String("ComputeSave"), &sprops.ApiWriteToSaveBlockDataProps_FIRST_ENV)
 
-	pipe.AddStage(stage, &sprops.AddStageOpts)
+	stagedevdeployment := pipe.AddStage(stagedev, &sprops.AddStageOpts)
+
+	stageprod := awscdk.NewStage(stack, jsii.String("ComputeSaveStage"), &sprops.StageProps)
+
+	promotedecision := pipelines.NewManualApprovalStep(jsii.String("PromoteToProduction"), &sprops.PromoteToProductionDecisionProps)
+
+	stagedevdeployment.AddPost(promotedecision)
+
+	computesave.NewApiWriteToSaveBlockData(stageprod, jsii.String("ComputeSave"), &sprops.ApiWriteToSaveBlockDataProps_SECOND_ENV)
+
+	pipe.AddStage(stageprod, &sprops.AddStageOpts)
 
 	var component PipelineDeployApiWriteToSaveBlockData = &pipelineDeployApiWriteToSaveBlockData{
 		Stack:        stack,
@@ -107,6 +119,8 @@ var PipelineDeployApiWriteToSaveBlockDataProps_DEV PipelineDeployApiWriteToSaveB
 
 	ApiWriteToSaveBlockDataProps_FIRST_ENV: computesave.ApiWriteToSaveBlockDataProps_DEV,
 
+	ApiWriteToSaveBlockDataProps_SECOND_ENV: computesave.ApiWriteToSaveBlockDataProps_PROD,
+
 	CfnConnectionProps: awscodestarconnections.CfnConnectionProps{
 		ConnectionName: jsii.String("GithubConnection"),
 		ProviderType:   jsii.String("GitHub"),
@@ -125,6 +139,8 @@ var PipelineDeployApiWriteToSaveBlockDataProps_DEV PipelineDeployApiWriteToSaveB
 			"./compile.sh handler echolambda.go", "cd ../../../", "cdk synth"),
 		BuildEnvironment: &awscodebuild.BuildEnvironment{},
 	},
+
+	PromoteToProductionDecisionProps: pipelines.ManualApprovalStepProps{},
 
 	CodePipelineProps: pipelines.CodePipelineProps{
 		PipelineName:      jsii.String("DeployComputeSave"),

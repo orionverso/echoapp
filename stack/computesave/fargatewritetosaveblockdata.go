@@ -69,9 +69,10 @@ func NewFargateWriteToSaveBlockData(scope constructs.Construct, id *string, prop
 	defaultcontainer.AddEnvironment(jsii.String("DESTINATION"), tb.TableName())
 
 	var component FargateWriteToSaveBlockData = &fargateWriteToSaveBlockData{
-		Stack:   stackless,
-		writer:  fg,
-		storage: sv,
+		Stack:      stackless,
+		writer:     fg,
+		storage:    sv,
+		repository: repo,
 	}
 
 	return component

@@ -15,7 +15,7 @@ func main() {
 
 	app := awscdk.NewApp(nil)
 
-	pipeline.NewPipelineDeployApiWriteToSaveBlockData(app, jsii.String("ComputeSavePipeline"), &pipeline.PipelineDeployApiWriteToSaveBlockDataProps_DEV)
+	pipeline.NewPipelineDeployFargateWriteToSaveBlockData(app, jsii.String("ComputeSavePipeline"), &pipeline.PipelineDeployFargateWriteToSaveBlockDataProps_DEV)
 
 	app.Synth(nil)
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsecr"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsecs"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awsiam"
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
 )
@@ -12,17 +13,20 @@ import (
 type EcrRepoProps struct {
 	awsecr.RepositoryProps
 	Tag string
+	awsiam.PolicyStatementProps
 }
 
 type ecrRepo struct {
 	constructs.Construct
 	repository awsecr.Repository
 	image      awsecs.EcrImage
+	sts        awsiam.PolicyStatement
 }
 
 type EcrRepo interface {
 	Repository() awsecr.Repository
 	Image() awsecs.EcrImage
+	PushImagePolicyStatement() awsiam.PolicyStatement
 }
 
 func NewEcrRepo(scope constructs.Construct, id *string, props *EcrRepoProps) EcrRepo {
@@ -42,13 +46,25 @@ func NewEcrRepo(scope constructs.Construct, id *string, props *EcrRepoProps) Ecr
 
 	image := awsecs.EcrImage_FromEcrRepository(repo, &sprops.Tag)
 
+	sprops.AddResourceToPolicyStatement(repo.RepositoryArn())
+
+	sts := awsiam.NewPolicyStatement(&sprops.PolicyStatementProps)
+
 	var component EcrRepo = &ecrRepo{
 		Construct:  this,
 		repository: repo,
 		image:      image,
+		sts:        sts,
 	}
 
 	return component
+}
+
+// PROPS
+func (props *EcrRepoProps) AddResourceToPolicyStatement(arn *string) {
+	var resource *[]*string = &[]*string{}
+	*resource = append(*resource, arn)
+	props.Resources = resource
 }
 
 // IMPLEMENTATION
@@ -60,6 +76,10 @@ func (mo *ecrRepo) Image() awsecs.EcrImage {
 	return mo.image
 }
 
+func (mo *ecrRepo) PushImagePolicyStatement() awsiam.PolicyStatement {
+	return mo.sts
+}
+
 // SETTINGS
 // DEVELOPMENT
 var EcrRepoProps_DEV EcrRepoProps = EcrRepoProps{
@@ -67,6 +87,15 @@ var EcrRepoProps_DEV EcrRepoProps = EcrRepoProps{
 		RepositoryName: jsii.String("echoapp-dev"),
 	},
 	Tag: "latest",
+
+	PolicyStatementProps: awsiam.PolicyStatementProps{
+		Actions: jsii.Strings("ecr:PutImageTagMutability",
+			"ecr:PutReplicationConfiguration",
+			"ecr:PutImage"),
+		Principals: &[]awsiam.IPrincipal{
+			awsiam.NewServicePrincipal(jsii.String("codebuild.amazonaws.com"), &awsiam.ServicePrincipalOpts{}),
+		},
+	},
 }
 
 // PRODUCTION
