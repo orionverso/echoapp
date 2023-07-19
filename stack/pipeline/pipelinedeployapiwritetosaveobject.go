@@ -141,7 +141,22 @@ var PipelineDeployApiWriteToSaveObjectProps_DEV PipelineDeployApiWriteToSaveObje
 	CodeBuildSynthProps: pipelines.CodeBuildStepProps{
 		Commands: jsii.Strings("npm install -g aws-cdk", "cd asset/lambda/echo",
 			"./compile.sh handler echolambda.go", "cd ../../../", "cdk synth"),
-		BuildEnvironment: &awscodebuild.BuildEnvironment{},
+		BuildEnvironment: &awscodebuild.BuildEnvironment{
+			EnvironmentVariables: &map[string]*awscodebuild.BuildEnvironmentVariable{
+				"CDK_DEV_REGION": {
+					Value: aws.ToString(environment.StackProps_DEV.Env.Region),
+				},
+				"CDK_DEV_ACCOUNT": {
+					Value: aws.ToString(environment.StackProps_DEV.Env.Account),
+				},
+				"CDK_PROD_REGION": {
+					Value: aws.ToString(environment.StackProps_PROD.Env.Region),
+				},
+				"CDK_PROD_ACCOUNT": {
+					Value: aws.ToString(environment.StackProps_PROD.Env.Account),
+				},
+			},
+		},
 	},
 
 	PromoteToProductionDecisionProps: pipelines.ManualApprovalStepProps{},

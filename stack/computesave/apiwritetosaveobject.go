@@ -43,9 +43,11 @@ func NewApiWriteToSaveObject(scope constructs.Construct, id *string, props *ApiW
 
 	this := constructs.NewConstruct(scope, id)
 
-	awscdk.NewStack(this, stateful, &sprops.StackProps)
+	stackful := awscdk.NewStack(this, stateful, &sprops.StackProps)
 
 	stackless := awscdk.NewStack(this, stateless, &sprops.StackProps)
+
+	stackful.AddDependency(stackless, jsii.String("Deploy first stackless"))
 
 	api := lambdarestapi.NewApiGatewayWithLambdaProxyIntegrated(stackless, serverless, &sprops.ApiGatewayWithLambdaProxyIntegratedProps)
 

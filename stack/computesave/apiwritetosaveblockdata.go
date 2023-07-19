@@ -43,9 +43,11 @@ func NewApiWriteToSaveBlockData(scope constructs.Construct, id *string, props *A
 
 	this := constructs.NewConstruct(scope, id)
 
-	awscdk.NewStack(this, stateful, &sprops.StackProps) // empty stack //Delete fargate stateful
+	stackful := awscdk.NewStack(this, stateful, &sprops.StackProps) // empty stack //Delete fargate stateful
 
 	stackless := awscdk.NewStack(this, stateless, &sprops.StackProps)
+
+	stackful.AddDependency(stackless, jsii.String("Deploy first stackless"))
 
 	api := lambdarestapi.NewApiGatewayWithLambdaProxyIntegrated(stackless, serverless, &sprops.ApiGatewayWithLambdaProxyIntegratedProps)
 
