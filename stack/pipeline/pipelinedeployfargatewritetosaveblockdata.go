@@ -72,7 +72,7 @@ func NewPipelineDeployFargateWriteToSaveBlockData(scope constructs.Construct, id
 	sprops.AddTemplateToCodePipeline(template)
 
 	pipe := pipelines.NewCodePipeline(stack, jsii.String("CodePipeline"), &sprops.CodePipelineProps)
-	///////////////////////////
+
 	stagedev := awscdk.NewStage(stack, jsii.String("ComputeSaveStage"), &sprops.StageProps)
 
 	computesave.NewFargateWriteToSaveBlockData(stagedev, jsii.String("ComputeSave"), &sprops.FargateWriteToSaveBlockDataProps_FIRST_ENV)
@@ -86,9 +86,9 @@ func NewPipelineDeployFargateWriteToSaveBlockData(scope constructs.Construct, id
 	sprops.AddPostStepsToStackStep(0, stagedevdeployment, pushimage)
 
 	stagedevdeployment.AddPost(promotedecision)
-	/////////////////////////
-	sprops.StageProps.Env.Account = environment.StageProps_PROD.Env.Account
-	sprops.StackProps.Env.Account = environment.StackProps_PROD.Env.Account
+	// change environment
+	sprops.StageProps = environment.StageProps_PROD
+	sprops.StackProps = environment.StackProps_PROD
 
 	stageprod := awscdk.NewStage(stack, jsii.String("ComputeSaveStage-Prod"), &sprops.StageProps)
 

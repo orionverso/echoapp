@@ -9,6 +9,7 @@ import (
 	"github.com/aws/aws-cdk-go/awscdk/v2/awscodebuild"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awscodestarconnections"
 	"github.com/aws/aws-cdk-go/awscdk/v2/pipelines"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
 )
@@ -17,12 +18,14 @@ type PipelineDeployApiWriteToSaveObjectProps struct {
 	awscdk.StackProps
 	awscdk.StageProps
 	pipelines.AddStageOpts
-	ApiWriteToSaveObjectProps_FIRST_ENV computesave.ApiWriteToSaveObjectProps
+	ApiWriteToSaveObjectProps_FIRST_ENV  computesave.ApiWriteToSaveObjectProps
+	ApiWriteToSaveObjectProps_SECOND_ENV computesave.ApiWriteToSaveObjectProps
 	awscodestarconnections.CfnConnectionProps
 	pipelines.ConnectionSourceOptions
-	RepositoryProps     string
-	BranchProps         string
-	CodeBuildSynthProps pipelines.CodeBuildStepProps
+	RepositoryProps                  string
+	BranchProps                      string
+	CodeBuildSynthProps              pipelines.CodeBuildStepProps
+	PromoteToProductionDecisionProps pipelines.ManualApprovalStepProps
 	pipelines.CodePipelineProps
 }
 
@@ -63,11 +66,24 @@ func NewPipelineDeployApiWriteToSaveObject(scope constructs.Construct, id *strin
 
 	pipe := pipelines.NewCodePipeline(stack, jsii.String("CodePipeline"), &sprops.CodePipelineProps)
 
-	stage := awscdk.NewStage(stack, jsii.String("ComputeSaveStage"), &sprops.StageProps)
+	stagedev := awscdk.NewStage(stack, jsii.String("ComputeSaveStage"), &sprops.StageProps)
 
-	computesave.NewApiWriteToSaveObject(stage, jsii.String("ComputeSave"), &sprops.ApiWriteToSaveObjectProps_FIRST_ENV)
+	computesave.NewApiWriteToSaveObject(stagedev, jsii.String("ComputeSave"), &sprops.ApiWriteToSaveObjectProps_FIRST_ENV)
 
-	pipe.AddStage(stage, &sprops.AddStageOpts)
+	stagedevdeployment := pipe.AddStage(stagedev, &sprops.AddStageOpts)
+
+	promotedecision := pipelines.NewManualApprovalStep(jsii.String("PromoteToProduction"), &sprops.PromoteToProductionDecisionProps)
+
+	stagedevdeployment.AddPost(promotedecision)
+	// change environment
+	sprops.StageProps = environment.StageProps_PROD
+	sprops.StackProps = environment.StackProps_PROD
+
+	stageprod := awscdk.NewStage(stack, jsii.String("ComputeSaveStage-Prod"), &sprops.StageProps)
+
+	computesave.NewApiWriteToSaveObject(stageprod, jsii.String("ComputeSave"), &sprops.ApiWriteToSaveObjectProps_SECOND_ENV)
+
+	pipe.AddStage(stageprod, &sprops.AddStageOpts)
 
 	var component PipelineDeployApiWriteToSaveObject = &pipelineDeployApiWriteToSaveObject{
 		Stack:        stack,
@@ -107,6 +123,8 @@ var PipelineDeployApiWriteToSaveObjectProps_DEV PipelineDeployApiWriteToSaveObje
 
 	ApiWriteToSaveObjectProps_FIRST_ENV: computesave.ApiWriteToSaveObjectProps_DEV,
 
+	ApiWriteToSaveObjectProps_SECOND_ENV: computesave.ApiWriteToSaveObjectProps_PROD,
+
 	CfnConnectionProps: awscodestarconnections.CfnConnectionProps{
 		ConnectionName: jsii.String("GithubConnection"),
 		ProviderType:   jsii.String("GitHub"),
@@ -121,9 +139,12 @@ var PipelineDeployApiWriteToSaveObjectProps_DEV PipelineDeployApiWriteToSaveObje
 	BranchProps: "main",
 
 	CodeBuildSynthProps: pipelines.CodeBuildStepProps{
-		Commands:         jsii.Strings("npm install -g aws-cdk", "cdk synth"),
+		Commands: jsii.Strings("npm install -g aws-cdk", "cd asset/lambda/echo",
+			"./compile.sh handler echolambda.go", "cd ../../../", "cdk synth"),
 		BuildEnvironment: &awscodebuild.BuildEnvironment{},
 	},
+
+	PromoteToProductionDecisionProps: pipelines.ManualApprovalStepProps{},
 
 	CodePipelineProps: pipelines.CodePipelineProps{
 		PipelineName:      jsii.String("DeployComputeSave"),
@@ -156,8 +177,24 @@ var PipelineDeployApiWriteToSaveObjectProps_PROD PipelineDeployApiWriteToSaveObj
 	BranchProps: "main",
 
 	CodeBuildSynthProps: pipelines.CodeBuildStepProps{
-		Commands:         jsii.Strings("npm install -g aws-cdk", "cdk synth"),
-		BuildEnvironment: &awscodebuild.BuildEnvironment{},
+		Commands: jsii.Strings("npm install -g aws-cdk", "cd asset/lambda/echo",
+			"./compile.sh handler echolambda.go", "cd ../../../", "cdk synth"),
+		BuildEnvironment: &awscodebuild.BuildEnvironment{
+			EnvironmentVariables: &map[string]*awscodebuild.BuildEnvironmentVariable{
+				"CDK_DEV_REGION": {
+					Value: aws.ToString(environment.StackProps_DEV.Env.Region),
+				},
+				"CDK_DEV_ACCOUNT": {
+					Value: aws.ToString(environment.StackProps_DEV.Env.Account),
+				},
+				"CDK_PROD_REGION": {
+					Value: aws.ToString(environment.StackProps_PROD.Env.Region),
+				},
+				"CDK_PROD_ACCOUNT": {
+					Value: aws.ToString(environment.StackProps_PROD.Env.Account),
+				},
+			},
+		},
 	},
 
 	CodePipelineProps: pipelines.CodePipelineProps{

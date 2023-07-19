@@ -9,6 +9,7 @@ import (
 	"github.com/aws/aws-cdk-go/awscdk/v2/awscodebuild"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awscodestarconnections"
 	"github.com/aws/aws-cdk-go/awscdk/v2/pipelines"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
 )
@@ -69,17 +70,20 @@ func NewPipelineDeployApiWriteToSaveBlockData(scope constructs.Construct, id *st
 
 	computesave.NewApiWriteToSaveBlockData(stagedev, jsii.String("ComputeSave"), &sprops.ApiWriteToSaveBlockDataProps_FIRST_ENV)
 
-	pipe.AddStage(stagedev, &sprops.AddStageOpts)
+	stagedevdeployment := pipe.AddStage(stagedev, &sprops.AddStageOpts)
 
-	// stageprod := awscdk.NewStage(stack, jsii.String("ComputeSaveStage"), &sprops.StageProps)
-	//
-	// promotedecision := pipelines.NewManualApprovalStep(jsii.String("PromoteToProduction"), &sprops.PromoteToProductionDecisionProps)
-	//
-	// stagedevdeployment.AddPost(promotedecision)
-	//
-	// computesave.NewApiWriteToSaveBlockData(stageprod, jsii.String("ComputeSave"), &sprops.ApiWriteToSaveBlockDataProps_SECOND_ENV)
-	//
-	// pipe.AddStage(stageprod, &sprops.AddStageOpts)
+	promotedecision := pipelines.NewManualApprovalStep(jsii.String("PromoteToProduction"), &sprops.PromoteToProductionDecisionProps)
+
+	stagedevdeployment.AddPost(promotedecision)
+	// change environment
+	sprops.StageProps = environment.StageProps_PROD
+	sprops.StackProps = environment.StackProps_PROD
+
+	stageprod := awscdk.NewStage(stack, jsii.String("ComputeSaveStage-Prod"), &sprops.StageProps)
+
+	computesave.NewApiWriteToSaveBlockData(stageprod, jsii.String("ComputeSave"), &sprops.ApiWriteToSaveBlockDataProps_SECOND_ENV)
+
+	pipe.AddStage(stageprod, &sprops.AddStageOpts)
 
 	var component PipelineDeployApiWriteToSaveBlockData = &pipelineDeployApiWriteToSaveBlockData{
 		Stack:        stack,
@@ -137,7 +141,22 @@ var PipelineDeployApiWriteToSaveBlockDataProps_DEV PipelineDeployApiWriteToSaveB
 	CodeBuildSynthProps: pipelines.CodeBuildStepProps{
 		Commands: jsii.Strings("npm install -g aws-cdk", "cd asset/lambda/echo",
 			"./compile.sh handler echolambda.go", "cd ../../../", "cdk synth"),
-		BuildEnvironment: &awscodebuild.BuildEnvironment{},
+		BuildEnvironment: &awscodebuild.BuildEnvironment{
+			EnvironmentVariables: &map[string]*awscodebuild.BuildEnvironmentVariable{
+				"CDK_DEV_REGION": {
+					Value: aws.ToString(environment.StackProps_DEV.Env.Region),
+				},
+				"CDK_DEV_ACCOUNT": {
+					Value: aws.ToString(environment.StackProps_DEV.Env.Account),
+				},
+				"CDK_PROD_REGION": {
+					Value: aws.ToString(environment.StackProps_PROD.Env.Region),
+				},
+				"CDK_PROD_ACCOUNT": {
+					Value: aws.ToString(environment.StackProps_PROD.Env.Account),
+				},
+			},
+		},
 	},
 
 	PromoteToProductionDecisionProps: pipelines.ManualApprovalStepProps{},
@@ -176,7 +195,20 @@ var PipelineDeployApiWriteToSaveBlockDataProps_PROD PipelineDeployApiWriteToSave
 		Commands: jsii.Strings("npm install -g aws-cdk", "cd asset/lambda/echo",
 			"./compile.sh handler echolambda.go", "cd ../../../", "cdk synth"),
 		BuildEnvironment: &awscodebuild.BuildEnvironment{
-			EnvironmentVariables: &map[string]*awscodebuild.BuildEnvironmentVariable{},
+			EnvironmentVariables: &map[string]*awscodebuild.BuildEnvironmentVariable{
+				"CDK_DEV_REGION": {
+					Value: aws.ToString(environment.StackProps_DEV.Env.Region),
+				},
+				"CDK_DEV_ACCOUNT": {
+					Value: aws.ToString(environment.StackProps_DEV.Env.Account),
+				},
+				"CDK_PROD_REGION": {
+					Value: aws.ToString(environment.StackProps_PROD.Env.Region),
+				},
+				"CDK_PROD_ACCOUNT": {
+					Value: aws.ToString(environment.StackProps_PROD.Env.Account),
+				},
+			},
 		},
 	},
 
